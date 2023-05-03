@@ -18,7 +18,7 @@ from shopify.api_access import *
 from shopify.collection import PaginatedIterator
 import requests
 
-    def start_interpreter(**variables):
+def start_interpreter(**variables):
         # add the current working directory to the sys paths
         sys.path.append(os.getcwd())
         console = type("shopify " + shopify.version.VERSION, (code.InteractiveConsole, object), {})
@@ -26,7 +26,7 @@ import requests
 
         console(variables).interact()
 
-    def on_message(self, message, data):
+def on_message(self, message, data):
         if "shopify" in message.lower():
             # Add your desired functionality here
             # e.g., Generate a product description for a specific product
@@ -37,16 +37,16 @@ import requests
 
         return None
 
-    def help(self):
+def help(self):
         return "This plugin integrates with the Shopify API to generate product descriptions, analyze store data, and more."
 
-    def name(self):
+def name(self):
         return "ShopifyPlugin"
 
-    def version(self):
+def version(self):
         return "1.0.0"
 
-    def usage(usage_string):
+def usage(usage_string):
         """Decorator to add a usage string to a function"""
 
         def decorate(func):
