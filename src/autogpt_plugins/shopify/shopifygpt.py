@@ -8,7 +8,6 @@ import subprocess
 import functools
 import yaml
 import six
-from . import AutoGPTShopify
 from six.moves import input, map
 import requests
 
