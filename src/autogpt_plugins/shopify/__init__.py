@@ -81,7 +81,175 @@ class AutoGPTShopifyPlugin(AutoGPTPluginTemplate):
         Returns:
             PromptGenerator: The prompt generator.
         """
-        pass
+        prompt.add_command(
+            "Create Product",
+            "create_product",
+            {
+                "title": "<title>",
+                "description": "<description>"
+            },
+            self.create_product
+        ),
+
+        prompt.add_command(
+            "Get Product",
+            "get_product",
+            {
+                "product_id": "<product_id>"
+            },
+            self.get_product
+        ),
+
+        prompt.add_command(
+            "Get All Products",
+            "get_all_products",
+            {},
+            self.get_all_products
+        ),
+
+        prompt.add_command(
+            "Update Product",
+            "update_product",
+            {
+                "product_id": "<product_id>",
+                "title": "<title>",
+                "description": "<description>"
+            },
+            self.update_product
+        ),
+
+        prompt.add_command(
+            "Delete Product",
+            "delete_product",
+            {
+                "product_id": "<product_id>"
+            },
+            self.delete_product
+        ),
+        
+        prompt.add_command(
+            "Create Collection",
+            "create_collection",
+            {
+                "title": "<title>",
+                "collection_type": "<collection_type>"
+            },
+            self.create_collection
+        ),
+
+        prompt.add_command(
+            "Create Collection",
+            "create_collection",
+            {
+                "title": "<title>",
+                "collection_type": "<collection_type>"
+            },
+            self.create_collection
+        ),
+
+        prompt.add_command(
+            "Add Product to Collection",
+            "add_product_to_collection",
+            {
+                "product_id": "<product_id>",
+                "collection_id": "<collection_id>"
+            },
+            self.add_product_to_collection
+        ),
+
+        prompt.add_command(
+            "Get All Collections",
+            "get_all_collections",
+            {
+                "collection_type": "<collection_type>"
+            },
+            self.get_all_collections
+        ),
+
+        prompt.add_command(
+            "Update Collection",
+            "update_collection",
+            {
+                "collection_id": "<collection_id>",
+                "title": "<title>",
+                "collection_type": "<collection_type>"
+            },
+            self.update_collection
+        ),
+
+        prompt.add_command(
+            "Delete Collection",
+            "delete_collection",
+            {
+                "collection_id": "<collection_id>",
+                "collection_type": "<collection_type>"
+            },
+            self.delete_collection
+        ),
+
+        prompt.add_command(
+            "Search Products by Title",
+            "search_products_by_title",
+            {
+                "title": "<title>"
+            },
+            self.search_products_by_title
+        ),
+
+        prompt.add_command(
+            "Get All Themes",
+            "get_all_themes",
+            {},
+            self.get_all_themes
+        ),
+
+        prompt.add_command(
+            "Get Active Theme",
+            "get_active_theme",
+            {},
+            self.get_active_theme
+        ),
+
+        prompt.add_command(
+            "Get Theme Assets",
+            "get_theme_assets",
+            {
+                "theme_id": "<theme_id>"
+            },
+            self.get_theme_assets
+        ),
+
+        prompt.add_command(
+            "Get Theme Asset",
+            "get_theme_asset",
+            {
+                "theme_id": "<theme_id>",
+                "asset_key": "<asset_key>"
+            },
+            self.get_theme_asset
+        ),
+
+        prompt.add_command(
+            "Update Theme Asset",
+            "update_theme_asset",
+            {
+                "theme_id": "<theme_id>",
+                "asset_key": "<asset_key>",
+                "new_asset_value": "<new_asset_value>"
+            },
+            self.update_theme_asset
+        ),
+
+        prompt.add_command(
+            "Delete Theme Asset",
+            "delete_theme_asset",
+            {
+                "theme_id": "<theme_id>",
+                "asset_key": "<asset_key>"
+            },
+            self.delete_theme_asset
+        ),
+        return prompt
 
 
     def can_handle_on_planning(self) -> bool:
@@ -227,6 +395,7 @@ class AutoGPTShopifyPlugin(AutoGPTPluginTemplate):
             str: The resulting response.
         """
         pass
+
 
     def can_handle_chat_completion(
         self, messages: Dict[Any, Any], model: str, temperature: float, max_tokens: int
