@@ -18,8 +18,6 @@ from shopify.api_access import *
 from shopify.collection import PaginatedIterator
 import requests
 
-
-class ShopifyGPT():
     def start_interpreter(**variables):
         # add the current working directory to the sys paths
         sys.path.append(os.getcwd())
@@ -57,6 +55,7 @@ class ShopifyGPT():
 
         return decorate
 
+class ShopifyGPT():
     def create_product(self, title, description=None):
         product = shopify.Product()
         product.title = title
