@@ -5,8 +5,8 @@ import shopify.mixins as mixins
 import shopify
 import threading
 import sys
-from six.moves import urllib
 import six
+from six.moves import urllib
 
 from shopify.collection import PaginatedCollection
 from pyactiveresource.collection import Collection

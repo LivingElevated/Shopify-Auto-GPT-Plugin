@@ -1,3 +1,6 @@
+import os
+import sys
+
 from ..base import ShopifyResource
 from .metafield import Metafield
 from .event import Event
