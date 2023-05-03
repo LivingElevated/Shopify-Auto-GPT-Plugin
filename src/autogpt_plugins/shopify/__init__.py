@@ -48,18 +48,7 @@ class AutoGPTShopify(AutoGPTPluginTemplate):
         # Initialize Shopify API
         self.api = None
         
-        if (
-            self.shopify_api_key
-            and self.shopify_api_secret
-            and self.shopify_password
-            and self.store_url
-            and self.api_version
 
-        ) is not None:
-            shopify.Session.setup(api_key=self.shopify_api_key, secret=self.shopify_api_secret)
-
-        else:
-            print("Shopify credentials not found in .env file.")
 
     def can_handle_on_response(self) -> bool:
         """This method is called to check that the plugin can
