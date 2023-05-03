@@ -15,6 +15,7 @@ from shopify.resources import *
 from shopify.limits import Limits
 from shopify.api_version import *
 from shopify.api_access import *
+from shopify.base import *
 from shopify.collection import PaginatedIterator
 import requests
 
