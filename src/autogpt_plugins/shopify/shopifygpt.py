@@ -13,7 +13,7 @@ from six.moves import input, map
 import requests
 
 
-class Shopify():
+class ShopifyGPT():
     def start_interpreter(**variables):
         # add the current working directory to the sys paths
         sys.path.append(os.getcwd())
