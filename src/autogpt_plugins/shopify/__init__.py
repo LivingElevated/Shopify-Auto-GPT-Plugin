@@ -57,12 +57,7 @@ class AutoGPTShopify(AutoGPTPluginTemplate):
 
         ) is not None:
             shopify.Session.setup(api_key=self.shopify_api_key, secret=self.shopify_api_secret)
-            shop_url = self.store_url
-            api_version = self.api_version
-            private_app_password = self.shopify_password
-            session = shopify.Session(shop_url, api_version, private_app_password)
-            shopify.ShopifyResource.activate_session(session)
-            shop = shopify.Shop.current()
+
         else:
             print("Shopify credentials not found in .env file.")
 
