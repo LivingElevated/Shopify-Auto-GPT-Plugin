@@ -1,8 +1,17 @@
 """This is a Shopify integration plugin for Auto-GPT."""
 import os
+import os.path
+import shopify
+import code
+import sys
+import glob
+import subprocess
+import functools
+import yaml
+import six
 from typing import Any, Dict, List, Optional, Tuple, TypeVar, TypedDict
-
 from auto_gpt_plugin_template import AutoGPTPluginTemplate
+from .shopify import ShopifyGPT
 from shopify.version import VERSION
 from shopify.session import Session, ValidationException
 from shopify.resources import *
@@ -20,7 +29,7 @@ class Message(TypedDict):
     content: str
 
 
-class AutoGPTShopifyPlugin(AutoGPTPluginTemplate):
+class AutoGPTShopify(AutoGPTPluginTemplate):
     """
     Shopify API integrations using ShopifyAPI
     """
@@ -31,22 +40,31 @@ class AutoGPTShopifyPlugin(AutoGPTPluginTemplate):
         self._version = "0.0.1"
         self._description = "Shopify API integrations using ShopifyAPI."
         self.shopify_api_key = os.getenv("SHOPIFY_API_Key")
+        self.shopify_api_secret = os.getenv("API_SECRET")
         self.shopify_password = os.getenv("SHOPIFY_PASSWORD")
         self.store_url = os.getenv("STORE_URL")
+        self.api_version = os.getenv("API_VERSION")
 
         # Initialize Shopify API
         self.api = None
         
         if (
             self.shopify_api_key
+            and self.shopify_api_secret
             and self.shopify_password
             and self.store_url
+            and self.api_version
+
         ) is not None:
-            shop_url = f"https://{self.shopify_api_key}:{self.shopify_password}@{self.store_url}/admin/api/2022-04"
-            session = shopify.Session(shop_url)
-            self.api = shopify.ShopifyResource.activate_session(session)
+            shopify.Session.setup(api_key=self.shopify_api_key, secret=self.shopify_api_secret)
+            shop_url = self.store_url
+            api_version = self.api_version
+            private_app_password = self.shopify_password
+            session = shopify.Session(shop_url, api_version, private_app_password)
+            shopify.ShopifyResource.activate_session(session)
+            shop = shopify.Shop.current()
         else:
-            print("Shopify credentials not found in the config.")
+            print("Shopify credentials not found in .env file.")
 
     def can_handle_on_response(self) -> bool:
         """This method is called to check that the plugin can
