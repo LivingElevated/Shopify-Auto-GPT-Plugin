@@ -286,7 +286,7 @@ class AutoGPTShopify(AutoGPTPluginTemplate):
         pass
 
 
-def can_handle_post_planning(self) -> bool:
+    def can_handle_post_planning(self) -> bool:
         """This method is called to check that the plugin can
         handle the post_planning method.
 
@@ -295,7 +295,7 @@ def can_handle_post_planning(self) -> bool:
         return False
 
 
-def post_planning(self, response: str) -> str:
+    def post_planning(self, response: str) -> str:
         """This method is called after the planning chat completion is done.
 
         Args:
@@ -307,7 +307,7 @@ def post_planning(self, response: str) -> str:
         pass
 
 
-def can_handle_pre_instruction(self) -> bool:
+    def can_handle_pre_instruction(self) -> bool:
         """This method is called to check that the plugin can
         handle the pre_instruction method.
 
@@ -315,7 +315,7 @@ def can_handle_pre_instruction(self) -> bool:
             bool: True if the plugin can handle the pre_instruction method."""
         return False
 
-def pre_instruction(self, messages: List[Message]) -> List[Message]:
+    def pre_instruction(self, messages: List[Message]) -> List[Message]:
         """This method is called before the instruction chat is done.
 
         Args:
@@ -327,7 +327,7 @@ def pre_instruction(self, messages: List[Message]) -> List[Message]:
         pass
 
 
-def can_handle_on_instruction(self) -> bool:
+    def can_handle_on_instruction(self) -> bool:
         """This method is called to check that the plugin can
         handle the on_instruction method.
 
@@ -336,7 +336,7 @@ def can_handle_on_instruction(self) -> bool:
         return False
 
 
-def on_instruction(self, messages: List[Message]) -> Optional[str]:
+    def on_instruction(self, messages: List[Message]) -> Optional[str]:
         """This method is called when the instruction chat is done.
 
         Args:
@@ -347,7 +347,7 @@ def on_instruction(self, messages: List[Message]) -> Optional[str]:
         """
         pass
 
-def can_handle_post_instruction(self) -> bool:
+    def can_handle_post_instruction(self) -> bool:
         """This method is called to check that the plugin can
         handle the post_instruction method.
 
@@ -355,7 +355,7 @@ def can_handle_post_instruction(self) -> bool:
             bool: True if the plugin can handle the post_instruction method."""
         return False
 
-def post_instruction(self, response: str) -> str:
+    def post_instruction(self, response: str) -> str:
         """This method is called after the instruction chat is done.
 
         Args:
@@ -366,7 +366,7 @@ def post_instruction(self, response: str) -> str:
         """
         pass
 
-def can_handle_pre_command(self) -> bool:
+    def can_handle_pre_command(self) -> bool:
         """This method is called to check that the plugin can
         handle the pre_command method.
 
@@ -374,7 +374,7 @@ def can_handle_pre_command(self) -> bool:
             bool: True if the plugin can handle the pre_command method."""
         return False
 
-def pre_command(
+    def pre_command(
         self, command_name: str, arguments: Dict[str, Any]
     ) -> Tuple[str, Dict[str, Any]]:
         """This method is called before the command is executed.
@@ -388,7 +388,7 @@ def pre_command(
         """
         pass
 
-def can_handle_post_command(self) -> bool:
+    def can_handle_post_command(self) -> bool:
         """This method is called to check that the plugin can
         handle the post_command method.
 
@@ -397,7 +397,7 @@ def can_handle_post_command(self) -> bool:
         return False
 
 
-def post_command(self, command_name: str, response: str) -> str:
+    def post_command(self, command_name: str, response: str) -> str:
         """This method is called after the command is executed.
 
         Args:
@@ -410,7 +410,7 @@ def post_command(self, command_name: str, response: str) -> str:
         pass
 
 
-def can_handle_chat_completion(
+    def can_handle_chat_completion(
         self, messages: Dict[Any, Any], model: str, temperature: float, max_tokens: int
     ) -> bool:
         """This method is called to check that the plugin can
@@ -426,7 +426,7 @@ def can_handle_chat_completion(
               bool: True if the plugin can handle the chat_completion method."""
         return False
 
-def handle_chat_completion(
+    def handle_chat_completion(
         self, messages: List[Message], model: str, temperature: float, max_tokens: int
     ) -> str:
         """This method is called when the chat completion is done.
@@ -442,7 +442,7 @@ def handle_chat_completion(
         """
         pass
 
-def can_handle_text_embedding(
+    def can_handle_text_embedding(
         self, text: str
     ) -> bool:
         """This method is called to check that the plugin can
@@ -453,7 +453,7 @@ def can_handle_text_embedding(
               bool: True if the plugin can handle the text_embedding method."""
         return False
 
-def handle_text_embedding(
+    def handle_text_embedding(
         self, text: str
     ) -> list:
         """This method is called when the chat completion is done.
@@ -464,7 +464,7 @@ def handle_text_embedding(
         """
         pass
 
-def can_handle_user_input(self, user_input: str) -> bool:
+    def can_handle_user_input(self, user_input: str) -> bool:
         """This method is called to check that the plugin can
         handle the user_input method.
 
@@ -476,7 +476,7 @@ def can_handle_user_input(self, user_input: str) -> bool:
         return False
 
 
-def user_input(self, user_input: str) -> str:
+    def user_input(self, user_input: str) -> str:
         """This method is called to request user input to the user.
 
         Args:
@@ -488,7 +488,7 @@ def user_input(self, user_input: str) -> str:
 
         pass
 
-def can_handle_report(self) -> bool:
+    def can_handle_report(self) -> bool:
         """This method is called to check that the plugin can
         handle the report method.
 
@@ -496,7 +496,7 @@ def can_handle_report(self) -> bool:
             bool: True if the plugin can handle the report method."""
         return False
 
-def report(self, message: str) -> None:
+    def report(self, message: str) -> None:
         """This method is called to report a message to the user.
 
         Args:
