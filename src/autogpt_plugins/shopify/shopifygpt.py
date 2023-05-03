@@ -425,7 +425,4 @@ class Tasks(object):
         raise ConfigFileError("There is no config file at " + filename)
 
 
-try:
-    Tasks.run_task(*sys.argv[1:])
-except ConfigFileError as e:
-    print(e)
+
