@@ -2,8 +2,6 @@
 import os
 import os.path
 import shopify
-import six
-from six.moves import input, map
 from typing import Any, Dict, List, Optional, Tuple, TypeVar, TypedDict
 from auto_gpt_plugin_template import AutoGPTPluginTemplate
 from shopify.version import VERSION
