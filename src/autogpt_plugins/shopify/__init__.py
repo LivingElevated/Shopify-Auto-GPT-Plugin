@@ -6,14 +6,14 @@ import six
 from six.moves import input, map
 from typing import Any, Dict, List, Optional, Tuple, TypeVar, TypedDict
 from auto_gpt_plugin_template import AutoGPTPluginTemplate
-from .shopifygpt import ShopifyGPT
-from shopify.version import VERSION
-from shopify.session import Session, ValidationException
-from shopify.resources import *
-from shopify.limits import Limits
-from shopify.api_version import *
-from shopify.api_access import *
-from shopify.collection import PaginatedIterator
+from plugin.shopifygpt import ShopifyGPT
+from plugin.shopify.version import VERSION
+from plugin.shopify.session import Session, ValidationException
+from plugin.shopify.resources import *
+from plugin.shopify.limits import Limits
+from plugin.shopify.api_version import *
+from plugin.shopify.api_access import *
+from plugin.shopify.collection import PaginatedIterator
 
 
 PromptGenerator = TypeVar("PromptGenerator")
