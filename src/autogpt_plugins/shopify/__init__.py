@@ -9,6 +9,12 @@ from auto_gpt_plugin_template import AutoGPTPluginTemplate
 PromptGenerator = TypeVar("PromptGenerator")
 
 
+shopify_api_key = os.getenv("SHOPIFY_API_Key")
+shopify_api_secret = os.getenv("API_SECRET")
+shopify_password = os.getenv("SHOPIFY_PASSWORD")
+store_url = os.getenv("STORE_URL")
+api_version = os.getenv("API_VERSION")
+
 class Message(TypedDict):
     role: str
     content: str
@@ -41,11 +47,8 @@ class AutoGPTShopify(AutoGPTPluginTemplate):
             and self.api_version
 
         ) is not None:
-            shopify.Session.setup(api_key=self.shopify_api_key, secret=self.shopify_api_secret)
-            shop_url = self.store_url
-            api_version = self.api_version
-            private_app_password = self.shopify_password
-            session = shopify.Session(self.store_url, self.api_version, self.shopify_password)
+            shopify.Session.setup(api_key=shopify_api_key, secret=shopify_api_secret)
+            session = shopify.Session(store_url, api_version, shopify_password)
             shopify.ShopifyResource.activate_session(session)
             shopify.Shop.current()
         else:
