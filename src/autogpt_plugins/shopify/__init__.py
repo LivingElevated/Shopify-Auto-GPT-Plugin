@@ -20,31 +20,26 @@ class Message(TypedDict):
     content: str
 
 
-class AutoGPTShopify(AutoGPTPluginTemplate):
+class ShopifyAutoGPT(AutoGPTPluginTemplate):
     """
     Auto GPT integrations using ShopifyAPI
     """
 
     def __init__(self):
         super().__init__()
-        self._name = "AutoGPT-Shopify"
+        self._name = "Shopify-AutoGPT"
         self._version = "0.0.1"
         self._description = "AutoGPT integrations using ShopifyAPI."
-        self.shopify_api_key = os.getenv("SHOPIFY_API_Key")
-        self.shopify_api_secret = os.getenv("API_SECRET")
-        self.shopify_password = os.getenv("SHOPIFY_PASSWORD")
-        self.store_url = os.getenv("STORE_URL")
-        self.api_version = os.getenv("API_VERSION")
 
         # Initialize Shopify API
         self.api = None
         
         if (
-            self.shopify_api_key
-            and self.shopify_api_secret
-            and self.shopify_password
-            and self.store_url
-            and self.api_version
+            shopify_api_key
+            and shopify_api_secret
+            and shopify_password
+            and store_url
+            and api_version
 
         ) is not None:
             shopify.Session.setup(api_key=shopify_api_key, secret=shopify_api_secret)

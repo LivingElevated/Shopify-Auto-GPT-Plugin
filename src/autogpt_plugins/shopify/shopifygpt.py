@@ -1,8 +1,5 @@
 import shopify
 import os
-from . import AutoGPTShopify
-from auto_gpt_plugin_template import AutoGPTPluginTemplate
-from typing import Any, Dict, List, Optional, Tuple, TypeVar, TypedDict
 from shopify.version import VERSION
 from shopify.session import Session, ValidationException
 from shopify.resources import *
@@ -10,8 +7,12 @@ from shopify.limits import Limits
 from shopify.api_version import *
 from shopify.api_access import *
 from shopify.collection import PaginatedIterator
+from . import ShopifyAutoGPT
+from auto_gpt_plugin_template import AutoGPTPluginTemplate
+from typing import Any, Dict, List, Optional, Tuple, TypeVar, TypedDict
 
-plugin = AutoGPTShopify()
+
+plugin = ShopifyAutoGPT()
 
 def create_product(self, title, description=None):
     product = shopify.Product()
