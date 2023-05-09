@@ -1,7 +1,7 @@
-from shopify.version import VERSION
-from shopify.session import Session, ValidationException
-from shopify.resources import *
-from shopify.limits import Limits
-from shopify.api_version import *
-from shopify.api_access import *
-from shopify.collection import PaginatedIterator
+from shopifygpt.version import VERSION
+from shopifygpt.session import Session, ValidationException
+from shopifygpt.resources import *
+from shopifygpt.limits import Limits
+from shopifygpt.api_version import *
+from shopifygpt.api_access import *
+from shopifygpt.collection import PaginatedIterator

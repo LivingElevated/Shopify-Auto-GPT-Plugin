@@ -1,5 +1,5 @@
-from shopify.base import ShopifyResource
-from shopify import mixins
+from shopifygpt.base import ShopifyResource
+from shopifygpt import mixins
 import os
 import sys
 import base64
