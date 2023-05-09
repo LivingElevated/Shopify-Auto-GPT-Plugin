@@ -45,7 +45,7 @@ class AutoGPTShopify(AutoGPTPluginTemplate):
             shop_url = self.store_url
             api_version = self.api_version
             private_app_password = self.shopify_password
-            session = shopify.Session(shop_url, api_version, private_app_password)
+            session = shopify.Session(self.store_url, self.api_version, self.shopify_password)
             shopify.ShopifyResource.activate_session(session)
             shopify.Shop.current()
         else:
