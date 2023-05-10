@@ -14,6 +14,7 @@ shopify_password = os.getenv('SHOPIFY_PASSWORD')
 store_url = os.getenv('STORE_URL')
 api_version = os.getenv('API_VERSION')
 session = shopify.Session(store_url, api_version, shopify_password)
+shopify.ShopifyResource.activate_session(session)
 
 class Message(TypedDict):
     role: str
@@ -30,7 +31,6 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
         self._name = "Shopify-AutoGPT"
         self._version = "0.0.1"
         self._description = "AutoGPT integrations using ShopifyAPI."
-        self.client = shopify.ShopifyResource.activate_session(session)
         print('Starting Shopify Connection...')
 
         # Initialize Shopify API
