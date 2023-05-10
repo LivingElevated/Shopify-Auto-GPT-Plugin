@@ -42,6 +42,7 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
             session = shopify.Session(store_url, api_version, shopify_password)
             shopify.ShopifyResource.activate_session(session)
             shopify.Shop.current()
+            
         else:
             print("Shopify credentials not found in .env file.")
 
