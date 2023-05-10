@@ -46,8 +46,7 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
 
         ) is not None:
         # Authenticating to Shopify
-            self.client = shopify.ShopifyResource.activate_session(session)
-            
+            print("Shopify credentials found in .env file.")
 
         else:
             print("Shopify credentials not found in .env file.")
