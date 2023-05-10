@@ -43,8 +43,8 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
             session = shopify.Session(store_url, api_version, shopify_password)
             self.client = shopify.ShopifyResource.activate_session(session)
             print('Starting Shopify Connection...')
-            self.client.start()
-            shopify.Shop.current()
+            self.shop = shopify.Shop
+            self.shop.current()
 
         else:
             print("Shopify credentials not found in .env file.")
