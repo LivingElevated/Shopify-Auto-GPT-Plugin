@@ -30,6 +30,7 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
         self._version = "0.0.1"
         self._description = "AutoGPT integrations using ShopifyAPI."
 
+
         # Initialize Shopify API
         if (
             shopify_api_key
@@ -40,7 +41,9 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
 
         ) is not None:
             session = shopify.Session(store_url, api_version, shopify_password)
-            shopify.ShopifyResource.activate_session(session)
+            self.client = shopify.ShopifyResource.activate_session(session)
+            print('Starting Shopify Connection...')
+            self.client.start()
             shopify.Shop.current()
 
         else:
