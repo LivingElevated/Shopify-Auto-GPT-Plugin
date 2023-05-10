@@ -1,5 +1,5 @@
-from shopifygpt.base import ShopifyResource
-from shopifygpt import mixins
+from shopify.base import ShopifyResource
+from shopify import mixins
 import os
 import sys
 import base64
@@ -211,15 +211,15 @@ class CustomCollection(ShopifyResource, mixins.Metafields, mixins.Events):
         if collect:
             collect.destroy()
 
+class CustomerSavedSearch(ShopifyResource):
+    def customers(cls, **kwargs):
+        return Customer._build_collection(cls.get("customers", **kwargs))
+
 class CustomerGroup(CustomerSavedSearch):
     pass
 
 class CustomerInvite(ShopifyResource):
     pass
-
-class CustomerSavedSearch(ShopifyResource):
-    def customers(cls, **kwargs):
-        return Customer._build_collection(cls.get("customers", **kwargs))
 
 class Customer(ShopifyResource, mixins.Metafields):
     @classmethod
