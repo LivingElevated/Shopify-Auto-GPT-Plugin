@@ -1,6 +1,5 @@
 """This is a Shopify integration plugin for Auto-GPT."""
 import os
-import os.path
 import shopify
 from typing import Any, Dict, List, Optional, Tuple, TypeVar, TypedDict
 from auto_gpt_plugin_template import AutoGPTPluginTemplate
@@ -8,11 +7,11 @@ from auto_gpt_plugin_template import AutoGPTPluginTemplate
 
 PromptGenerator = TypeVar("PromptGenerator")
 
-shopify_api_key = os.getenv('SHOPIFY_API_Key')
-shopify_api_secret = os.getenv('SHOPIFY_API_SECRET')
-shopify_password = os.getenv('SHOPIFY_PASSWORD')
-store_url = os.getenv('STORE_URL')
-api_version = os.getenv('API_VERSION')
+shopify_api_key= os.getenv("SHOPIFY_API_Key")
+shopify_api_secret= os.getenv("SHOPIFY_API_SECRET")
+shopify_password= os.getenv("SHOPIFY_PASSWORD")
+store_url= os.getenv("STORE_URL")
+api_version= os.getenv("API_VERSION")
 session = shopify.Session(store_url, api_version, shopify_password)
 shopify.ShopifyResource.activate_session(session)
 shopify.Shop.current()
