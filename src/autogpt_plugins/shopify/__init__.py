@@ -15,6 +15,8 @@ store_url = os.getenv('STORE_URL')
 api_version = os.getenv('API_VERSION')
 session = shopify.Session(store_url, api_version, shopify_password)
 shopify.ShopifyResource.activate_session(session)
+shopify.Shop.current()
+
 
 class Message(TypedDict):
     role: str
@@ -33,6 +35,8 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
         self._description = "AutoGPT integrations using ShopifyAPI."
         print('Starting Shopify Connection...')
 
+        self.client = None 
+
         # Initialize Shopify API
         if (
             shopify_api_key
@@ -42,6 +46,8 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
             and api_version
 
         ) is not None:
+        # Authenticating to Shopify
+            self.client = shopify.ShopifyResource.activate_session(session)
             self.shop = shopify.Shop
             self.shop.current()
 
@@ -82,7 +88,7 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
             PromptGenerator: The prompt generator.
         """
 
-        if self.api:
+        if self.client:
             from .shopifygpt import (
                 create_product,
                 get_product,
