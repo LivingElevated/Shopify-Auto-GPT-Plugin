@@ -9,7 +9,7 @@ from auto_gpt_plugin_template import AutoGPTPluginTemplate
 PromptGenerator = TypeVar("PromptGenerator")
 
 shopify_api_key = os.getenv('SHOPIFY_API_Key')
-shopify_api_secret = os.getenv('API_SECRET')
+shopify_api_secret = os.getenv('SHOPIFY_API_SECRET')
 shopify_password = os.getenv('SHOPIFY_PASSWORD')
 store_url = os.getenv('STORE_URL')
 api_version = os.getenv('API_VERSION')
@@ -42,7 +42,7 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
             session = shopify.Session(store_url, api_version, shopify_password)
             shopify.ShopifyResource.activate_session(session)
             shopify.Shop.current()
-            
+
         else:
             print("Shopify credentials not found in .env file.")
 
