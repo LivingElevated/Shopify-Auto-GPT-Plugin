@@ -39,14 +39,11 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
         # Initialize Shopify API
         if (
             shopify_api_key
-            and shopify_api_secret
-            and shopify_password
-            and store_url
-            and api_version
-
         ) is not None:
         # Authenticating to Shopify
-            print("Shopify credentials found in .env file.")
+            self.client = shopify.ShopifyResource.activate_session(session)
+            self.shop = shopify.Shop
+            self.shop.current()
 
         else:
             print("Shopify credentials not found in .env file.")
