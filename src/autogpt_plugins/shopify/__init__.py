@@ -1,25 +1,28 @@
 """This is a Shopify integration plugin for Auto-GPT."""
 import os
-import shopify
 from typing import Any, Dict, List, Optional, Tuple, TypeVar, TypedDict
+
+import shopify
 from auto_gpt_plugin_template import AutoGPTPluginTemplate
 
 
 PromptGenerator = TypeVar("PromptGenerator")
 
-shopify_api_key= os.getenv("SHOPIFY_API_Key")
-shopify_api_secret= os.getenv("SHOPIFY_API_SECRET")
-shopify_password= os.getenv("SHOPIFY_PASSWORD")
-store_url= os.getenv("STORE_URL")
-api_version= os.getenv("API_VERSION")
-session = shopify.Session(store_url, api_version, shopify_password)
-shopify.ShopifyResource.activate_session(session)
-shopify.Shop.current()
-
 
 class Message(TypedDict):
     role: str
     content: str
+
+
+shopify_api_key = os.getenv("SHOPIFY_API_Key")
+shopify_api_secret = os.getenv("SHOPIFY_API_SECRET")
+shopify_password = os.getenv("SHOPIFY_PASSWORD")
+store_url = os.getenv("STORE_URL")
+api_version = os.getenv("API_VERSION")
+session = shopify.Session(store_url, api_version, shopify_password)
+shopify.ShopifyResource.activate_session(session)
+shopify.Shop.current()
+
 
 
 class ShopifyAutoGPT(AutoGPTPluginTemplate):
@@ -44,7 +47,6 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
             self.client = shopify.ShopifyResource.activate_session(session)
             self.shop = shopify.Shop
             self.shop.current()
-
         else:
             print("Shopify credentials not found in .env file.")
 
