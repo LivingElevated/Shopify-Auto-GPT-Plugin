@@ -36,12 +36,13 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
         self._version = "0.0.1"
         self._description = "AutoGPT integrations using ShopifyAPI."
         print('Starting Shopify Connection...')
+        print(os.environ)
 
         self.client = None 
 
         # Initialize Shopify API
-        if (
-            shopify_api_key
+        if ( 
+
         ) is not None:
         # Authenticating to Shopify
             self.client = shopify.ShopifyResource.activate_session(session)
