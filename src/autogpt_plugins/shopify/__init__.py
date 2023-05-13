@@ -29,8 +29,9 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
         self.shopify_password = os.getenv("SHOPIFY_PASSWORD")
         self.store_url = os.getenv("STORE_URL")
         self.api_version = os.getenv("API_VERSION")
-        print('Starting Shopify Connection...')
         print(os.environ)
+        print('Starting Shopify Connection...')
+        print(self.store_url, self.api_version, self.shopify_password)
 
         self.client = None 
 
@@ -49,6 +50,7 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
             self.shop.current()
         else:
             print("Shopify credentials not found in .env file.")
+            print(session)
 
     def can_handle_on_response(self) -> bool:
         """This method is called to check that the plugin can
