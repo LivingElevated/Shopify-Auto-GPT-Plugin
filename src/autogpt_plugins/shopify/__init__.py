@@ -29,9 +29,14 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
         self.shopify_password = os.getenv("SHOPIFY_PASSWORD")
         self.store_url = os.getenv("STORE_URL")
         self.api_version = os.getenv("API_VERSION")
+        self.protocol = os.getenv("STORE_PROTOCOL")
         print(os.environ)
         print('Starting Shopify Connection...')
-        print(self.store_url, self.api_version, self.shopify_password)
+        print('api_key:', self.shopify_api_key)
+        print('api_version:', self.api_version)
+        print('domain:', self.store_url)
+        print('password:', self.shopify_password)
+        print('protocol:', self.protocol)
 
         self.client = None 
 
