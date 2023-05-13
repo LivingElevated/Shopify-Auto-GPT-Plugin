@@ -14,17 +14,6 @@ class Message(TypedDict):
     content: str
 
 
-shopify_api_key = os.getenv("SHOPIFY_API_Key")
-shopify_api_secret = os.getenv("SHOPIFY_API_SECRET")
-shopify_password = os.getenv("SHOPIFY_PASSWORD")
-store_url = os.getenv("STORE_URL")
-api_version = os.getenv("API_VERSION")
-session = shopify.Session(store_url, api_version, shopify_password)
-shopify.ShopifyResource.activate_session(session)
-shopify.Shop.current()
-
-
-
 class ShopifyAutoGPT(AutoGPTPluginTemplate):
     """
     Auto GPT integrations using ShopifyAPI
@@ -35,14 +24,26 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
         self._name = "Shopify-AutoGPT"
         self._version = "0.0.1"
         self._description = "AutoGPT integrations using ShopifyAPI."
+        self.shopify_api_key = os.getenv("SHOPIFY_API_Key")
+        self.shopify_api_secret = os.getenv("SHOPIFY_API_SECRET")
+        self.shopify_password = os.getenv("SHOPIFY_PASSWORD")
+        self.store_url = os.getenv("STORE_URL")
+        self.api_version = os.getenv("API_VERSION")
         print('Starting Shopify Connection...')
         print(os.environ)
 
         self.client = None 
 
         # Initialize Shopify API
-        if shopify_api_key is not None:
+        if (
+            self.shopify_api_key
+            and self.shopify_api_secret
+            and self.shopify_password
+            and self.store_url
+            and self.api_version
+        ) is not None:
         # Authenticating to Shopify
+            session = shopify.Session(self.store_url, self.api_version, self.shopify_password)
             self.client = shopify.ShopifyResource.activate_session(session)
             self.shop = shopify.Shop
             self.shop.current()
