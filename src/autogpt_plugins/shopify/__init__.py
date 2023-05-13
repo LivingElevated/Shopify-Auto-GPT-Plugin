@@ -50,7 +50,6 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
             self.shop.current()
         else:
             print("Shopify credentials not found in .env file.")
-            print(session)
 
     def can_handle_on_response(self) -> bool:
         """This method is called to check that the plugin can
