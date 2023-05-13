@@ -43,6 +43,7 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
             and self.store_url
             and self.api_version
         ) is not None:
+            print('Authenticating to Shopify...')
         # Authenticating to Shopify
             session = shopify.Session(self.store_url, self.api_version, self.shopify_password)
             self.client = shopify.ShopifyResource.activate_session(session)
