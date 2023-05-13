@@ -24,7 +24,7 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
         self._name = "Shopify-AutoGPT"
         self._version = "0.0.1"
         self._description = "AutoGPT integrations using ShopifyAPI."
-        self.shopify_api_key = os.getenv("SHOPIFY_API_Key")
+        self.shopify_api_key = os.getenv("SHOPIFY_API_KEY")
         self.shopify_api_secret = os.getenv("SHOPIFY_API_SECRET")
         self.shopify_password = os.getenv("SHOPIFY_PASSWORD")
         self.store_url = os.getenv("STORE_URL")
