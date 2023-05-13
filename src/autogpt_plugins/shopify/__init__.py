@@ -41,9 +41,7 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
         self.client = None 
 
         # Initialize Shopify API
-        if ( 
-
-        ) is not None:
+        if shopify_api_key is not None:
         # Authenticating to Shopify
             self.client = shopify.ShopifyResource.activate_session(session)
             self.shop = shopify.Shop
