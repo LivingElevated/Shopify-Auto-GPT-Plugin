@@ -52,7 +52,7 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
         # Authenticating to Shopify
             self.session = shopify.Session(self.store_url, self.api_version, self.shopify_password)
             self.client = shopify.ShopifyResource.activate_session(self.session)
-            self.shop = shopify.Shop
+            self.shop = shopify.Shop()
             self.shop.current()
             print('Shopify Authentication Complete')
         else:
