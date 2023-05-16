@@ -22,7 +22,7 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
     def __init__(self):
         super().__init__()
         self._name = "Shopify-AutoGPT"
-        self._version = "0.0.1"
+        self._version = "0.0.2"
         self._description = "AutoGPT integrations using ShopifyAPI."
         self.shopify_api_key = os.getenv("SHOPIFY_API_KEY")
         self.shopify_api_secret = os.getenv("SHOPIFY_API_SECRET")
