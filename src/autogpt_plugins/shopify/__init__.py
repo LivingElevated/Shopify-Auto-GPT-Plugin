@@ -80,8 +80,6 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
             bool: True if the plugin can handle the post_prompt method."""
         return True
 
- 
-
 
 
     def can_handle_on_planning(self) -> bool:
@@ -442,6 +440,7 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
             },
             delete_theme_asset,
         )
+        return prompt
 
         if self.client:
             return prompt
