@@ -298,7 +298,7 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
                 "title": "<title>",
                 "description": "<description>"
             },
-            create_product
+            create_product,
         )
         prompt.add_command(
             "Get Product",
@@ -312,7 +312,7 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
             "Get All Products",
             "get_all_products",
             {},
-            get_all_products
+            get_all_products,
         )
         prompt.add_command(
             "Update Product",
@@ -442,7 +442,7 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
             },
             delete_theme_asset,
         )
-        
+
         if self.client:
             return prompt
 
