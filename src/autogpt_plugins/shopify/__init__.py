@@ -78,212 +78,10 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
 
         Returns:
             bool: True if the plugin can handle the post_prompt method."""
-        return False
+        return True
 
  
-    def post_prompt(self, prompt: PromptGenerator) -> PromptGenerator:
-        """This method is called just after the generate_prompt is called,
-            but actually before the prompt is generated.
 
-        Args:
-            prompt (PromptGenerator): The prompt generator.
-
-        Returns:
-            PromptGenerator: The prompt generator.
-        """
-
-        if self.client:
-            from .shopifygpt import (
-                create_product,
-                get_product,
-                get_all_products,
-                update_product,
-                delete_product,
-                create_collection,
-                add_product_to_collection,
-                get_all_collections,
-                update_collection,
-                delete_collection,
-                search_products_by_title,
-                get_all_themes,
-                get_active_theme,
-                get_theme_assets,
-                get_theme_asset,
-                update_theme_asset,
-                delete_theme_asset,
-
-            )
-
-            
-            prompt.add_command(
-                "Create Product",
-                "create_product",
-                {
-                    "title": "<title>",
-                    "description": "<description>"
-                },
-                create_product
-            ),
-
-            prompt.add_command(
-                "Get Product",
-                "get_product",
-                {
-                    "product_id": "<product_id>"
-                },
-                get_product
-            ),
-
-            prompt.add_command(
-                "Get All Products",
-                "get_all_products",
-                {},
-                get_all_products
-            ),
-
-            prompt.add_command(
-                "Update Product",
-                "update_product",
-                {
-                    "product_id": "<product_id>",
-                    "title": "<title>",
-                    "description": "<description>"
-                },
-                update_product
-            ),
-
-            prompt.add_command(
-                "Delete Product",
-                "delete_product",
-                {
-                    "product_id": "<product_id>"
-                },
-                delete_product
-            ),
-            
-            prompt.add_command(
-                "Create Collection",
-                "create_collection",
-                {
-                    "title": "<title>",
-                    "collection_type": "<collection_type>"
-                },
-                create_collection
-            ),
-
-            prompt.add_command(
-                "Create Collection",
-                "create_collection",
-                {
-                    "title": "<title>",
-                    "collection_type": "<collection_type>"
-                },
-                create_collection
-            ),
-
-            prompt.add_command(
-                "Add Product to Collection",
-                "add_product_to_collection",
-                {
-                    "product_id": "<product_id>",
-                    "collection_id": "<collection_id>"
-                },
-                add_product_to_collection
-            ),
-
-            prompt.add_command(
-                "Get All Collections",
-                "get_all_collections",
-                {
-                    "collection_type": "<collection_type>"
-                },
-                get_all_collections
-            ),
-
-            prompt.add_command(
-                "Update Collection",
-                "update_collection",
-                {
-                    "collection_id": "<collection_id>",
-                    "title": "<title>",
-                    "collection_type": "<collection_type>"
-                },
-                update_collection
-            ),
-
-            prompt.add_command(
-                "Delete Collection",
-                "delete_collection",
-                {
-                    "collection_id": "<collection_id>",
-                    "collection_type": "<collection_type>"
-                },
-                delete_collection
-            ),
-
-            prompt.add_command(
-                "Search Products by Title",
-                "search_products_by_title",
-                {
-                    "title": "<title>"
-                },
-                search_products_by_title
-            ),
-
-            prompt.add_command(
-                "Get All Themes",
-                "get_all_themes",
-                {},
-                get_all_themes
-            ),
-
-            prompt.add_command(
-                "Get Active Theme",
-                "get_active_theme",
-                {},
-                get_active_theme
-            ),
-
-            prompt.add_command(
-                "Get Theme Assets",
-                "get_theme_assets",
-                {
-                    "theme_id": "<theme_id>"
-                },
-                get_theme_assets
-            ),
-
-            prompt.add_command(
-                "Get Theme Asset",
-                "get_theme_asset",
-                {
-                    "theme_id": "<theme_id>",
-                    "asset_key": "<asset_key>"
-                },
-                get_theme_asset
-            ),
-
-            prompt.add_command(
-                "Update Theme Asset",
-                "update_theme_asset",
-                {
-                    "theme_id": "<theme_id>",
-                    "asset_key": "<asset_key>",
-                    "new_asset_value": "<new_asset_value>"
-                },
-                update_theme_asset
-            ),
-
-            prompt.add_command(
-                "Delete Theme Asset",
-                "delete_theme_asset",
-                {
-                    "theme_id": "<theme_id>",
-                    "asset_key": "<asset_key>"
-                },
-                delete_theme_asset
-            ),
-        return prompt
 
 
     def can_handle_on_planning(self) -> bool:
@@ -296,7 +94,7 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
 
 
     def on_planning(
-        self, prompt: PromptGenerator, messages: List[Message]
+        self, prompt: PromptGenerator, messages: List[str]
     ) -> Optional[str]:
         """This method is called before the planning chat completion is done.
 
@@ -336,7 +134,7 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
             bool: True if the plugin can handle the pre_instruction method."""
         return False
 
-    def pre_instruction(self, messages: List[Message]) -> List[Message]:
+    def pre_instruction(self, messages: List[str]) -> List[str]:
         """This method is called before the instruction chat is done.
 
         Args:
@@ -357,7 +155,7 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
         return False
 
 
-    def on_instruction(self, messages: List[Message]) -> Optional[str]:
+    def on_instruction(self, messages: List[str]) -> Optional[str]:
         """This method is called when the instruction chat is done.
 
         Args:
@@ -432,7 +230,7 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
 
 
     def can_handle_chat_completion(
-        self, messages: Dict[Any, Any], model: str, temperature: float, max_tokens: int
+        self, messages: list[Dict[Any, Any]], model: str, temperature: float, max_tokens: int
     ) -> bool:
         """This method is called to check that the plugin can
           handle the chat_completion method.
@@ -448,7 +246,7 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
         return False
 
     def handle_chat_completion(
-        self, messages: List[Message], model: str, temperature: float, max_tokens: int
+        self, messages: list[Dict[Any, Any]], model: str, temperature: float, max_tokens: int
     ) -> str:
         """This method is called when the chat completion is done.
 
@@ -461,7 +259,210 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
         Returns:
             str: The resulting response.
         """
-        pass
+        return None
+    
+    def post_prompt(self, prompt: PromptGenerator) -> PromptGenerator:
+        """This method is called just after the generate_prompt is called,
+            but actually before the prompt is generated.
+
+        Args:
+            prompt (PromptGenerator): The prompt generator.
+
+        Returns:
+            PromptGenerator: The prompt generator.
+        """
+
+        if self.client:
+            from .shopifygpt import (
+                create_product,
+                get_product,
+                get_all_products,
+                update_product,
+                delete_product,
+                create_collection,
+                add_product_to_collection,
+                get_all_collections,
+                update_collection,
+                delete_collection,
+                search_products_by_title,
+                get_all_themes,
+                get_active_theme,
+                get_theme_assets,
+                get_theme_asset,
+                update_theme_asset,
+                delete_theme_asset,
+            )
+            
+            prompt.add_command(
+                "Create Product",
+                "create_product",
+                {
+                    "title": "<title>",
+                    "description": "<description>"
+                },
+                create_product
+            )
+
+            prompt.add_command(
+                "Get Product",
+                "get_product",
+                {
+                    "product_id": "<product_id>"
+                },
+                get_product,
+            )
+
+            prompt.add_command(
+                "Get All Products",
+                "get_all_products",
+                {},
+                get_all_products
+            )
+
+            prompt.add_command(
+                "Update Product",
+                "update_product",
+                {
+                    "product_id": "<product_id>",
+                    "title": "<title>",
+                    "description": "<description>"
+                },
+                update_product,
+            )
+
+            prompt.add_command(
+                "Delete Product",
+                "delete_product",
+                {
+                    "product_id": "<product_id>"
+                },
+                delete_product,
+            )
+            
+            prompt.add_command(
+                "Create Collection",
+                "create_collection",
+                {
+                    "title": "<title>",
+                    "collection_type": "<collection_type>"
+                },
+                create_collection,
+            )
+
+            prompt.add_command(
+                "Create Collection",
+                "create_collection",
+                {
+                    "title": "<title>",
+                    "collection_type": "<collection_type>"
+                },
+                create_collection,
+            )
+
+            prompt.add_command(
+                "Add Product to Collection",
+                "add_product_to_collection",
+                {
+                    "product_id": "<product_id>",
+                    "collection_id": "<collection_id>"
+                },
+                add_product_to_collection,
+            )
+
+            prompt.add_command(
+                "Get All Collections",
+                "get_all_collections",
+                {
+                    "collection_type": "<collection_type>"
+                },
+                get_all_collections,
+            )
+
+            prompt.add_command(
+                "Update Collection",
+                "update_collection",
+                {
+                    "collection_id": "<collection_id>",
+                    "title": "<title>",
+                    "collection_type": "<collection_type>"
+                },
+                update_collection,
+            )
+
+            prompt.add_command(
+                "Delete Collection",
+                "delete_collection",
+                {
+                    "collection_id": "<collection_id>",
+                    "collection_type": "<collection_type>"
+                },
+                delete_collection,
+            )
+
+            prompt.add_command(
+                "Search Products by Title",
+                "search_products_by_title",
+                {
+                    "title": "<title>"
+                },
+                search_products_by_title,
+            )
+
+            prompt.add_command(
+                "Get All Themes",
+                "get_all_themes",
+                {},
+                get_all_themes,
+            )
+
+            prompt.add_command(
+                "Get Active Theme",
+                "get_active_theme",
+                {},
+                get_active_theme,
+            )
+
+            prompt.add_command(
+                "Get Theme Assets",
+                "get_theme_assets",
+                {
+                    "theme_id": "<theme_id>"
+                },
+                get_theme_assets,
+            )
+
+            prompt.add_command(
+                "Get Theme Asset",
+                "get_theme_asset",
+                {
+                    "theme_id": "<theme_id>",
+                    "asset_key": "<asset_key>"
+                },
+                get_theme_asset,
+            )
+
+            prompt.add_command(
+                "Update Theme Asset",
+                "update_theme_asset",
+                {
+                    "theme_id": "<theme_id>",
+                    "asset_key": "<asset_key>",
+                    "new_asset_value": "<new_asset_value>"
+                },
+                update_theme_asset,
+            )
+
+            prompt.add_command(
+                "Delete Theme Asset",
+                "delete_theme_asset",
+                {
+                    "theme_id": "<theme_id>",
+                    "asset_key": "<asset_key>"
+                },
+                delete_theme_asset,
+            )
+        return prompt
+
 
     def can_handle_text_embedding(
         self, text: str
