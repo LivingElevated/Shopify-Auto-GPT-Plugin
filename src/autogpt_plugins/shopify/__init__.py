@@ -37,7 +37,7 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
         print('password:', self.shopify_password)
         print('protocol:', self.protocol)
 
-        self.client = None 
+        self.shop = None 
 
         # Initialize Shopify API
         if (
@@ -439,9 +439,8 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
             },
             delete_theme_asset,
         )
-        return prompt
 
-        if self.client:
+        if self.shop:
             return prompt
 
 
