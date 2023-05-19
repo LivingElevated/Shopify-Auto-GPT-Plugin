@@ -29,7 +29,15 @@ def create_product(self, title, description=None):
 def get_product(self, product_id):
     return plugin.shopify.Product.find(product_id)
 
-def get_all_products(self):
+def get_all_products() -> List[Any]:
+    """Fetch all products from Shopify.
+
+    Returns:
+        List[Any]: List of all products.
+    """
+    return plugin.get_all_products()
+
+def get_all_product(self):
     return plugin.shopify.Product.find()
 
 def update_product(self, product_id, title=None, description=None):
