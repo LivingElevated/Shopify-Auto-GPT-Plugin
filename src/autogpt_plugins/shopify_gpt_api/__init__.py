@@ -18,7 +18,8 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
     """
     Auto GPT integrations using ShopifyAPI
     """
-
+    import shopify
+    
     def __init__(self):
         super().__init__()
         self._name = "Shopify-AutoGPT"
@@ -37,7 +38,7 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
         print('password:', self.shopify_password)
         print('protocol:', self.protocol)
 
-        self.shop = None 
+        self.shopify = None 
 
         # Initialize Shopify API
         if (
@@ -51,8 +52,8 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
         # Authenticating to Shopify
             self.session = shopify.Session(self.store_url, self.api_version, self.shopify_password)
             self.client = shopify.ShopifyResource.activate_session(self.session)
-            self.shop = shopify.Shop()
-            self.shop.current()
+            self.shopify = shopify.Shop()
+            self.shopify.current()
             print('Shopify Authentication Complete')
         else:
             print("Shopify credentials not found in .env file.")
@@ -440,7 +441,7 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
             delete_theme_asset,
         )
 
-        if self.shop:
+        if self.shopify:
             return prompt
 
 
