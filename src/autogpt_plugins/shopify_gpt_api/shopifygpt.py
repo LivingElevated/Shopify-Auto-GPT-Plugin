@@ -14,20 +14,41 @@ from typing import Any, Dict, List, Optional, Tuple, TypeVar, TypedDict
 
 plugin = ShopifyAutoGPT()
 
-def create_product(self, title, description=None):
-    product = plugin.shopify.Product()
+
+def create_product(title: str, description: Optional[str] = None) -> shopify.Product:
+    """Create a new product on Shopify.
+
+    Args:
+        title (str): Title of the product.
+        description (Optional[str], optional): Description of the product. If None, an AI-generated description will be used. Defaults to None.
+
+    Returns:
+        shopify.Product: The newly created product.
+    """
+    product = shopify.Product()
     product.title = title
 
     if not description:
         prompt = f"Write a captivating product description for a {title}."
-        description = self.chatgpt_response(prompt)
+        description = plugin.chatgpt_response(prompt)
 
     product.body_html = description
     product.save()
+
     return product
 
-def get_product(self, product_id):
-    return plugin.shopify.Product.find(product_id)
+
+def get_product(product_id: str) -> shopify.Product:
+    """Fetch a product from Shopify.
+
+    Args:
+        product_id (str): The ID of the product to fetch.
+
+    Returns:
+        shopify.Product: The requested product.
+    """
+    return shopify.Product.find(product_id)
+
 
 def get_all_products() -> List[Any]:
     """Fetch all products from Shopify.
@@ -37,8 +58,6 @@ def get_all_products() -> List[Any]:
     """
     return shopify.Product.find()
 
-def get_all_product(self):
-    return plugin.shopify.Product.find()
 
 def update_product(self, product_id, title=None, description=None):
     product = self.get_product(product_id)
