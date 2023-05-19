@@ -9,7 +9,7 @@ from shopify.api_access import *
 from shopify.collection import PaginatedIterator
 from . import ShopifyAutoGPT
 from auto_gpt_plugin_template import AutoGPTPluginTemplate
-from typing import Any, Dict, List, Optional, Tuple, TypeVar, TypedDict
+from typing import Union, Any, Dict, List, Optional, Tuple, TypeVar, TypedDict
 
 
 plugin = ShopifyAutoGPT()
@@ -125,11 +125,17 @@ def create_collection(title: str, collection_type: str = "custom") -> Union[shop
     collection.save()
     return collection
 
-
-
-
 #Add a product to a collection:
-def add_product_to_collection(self, product_id, collection_id):
+def add_product_to_collection(product_id: int, collection_id: int) -> shopify.Collect:
+    """Add a product to a collection.
+
+    Args:
+        product_id (int): The ID of the product to add.
+        collection_id (int): The ID of the collection.
+
+    Returns:
+        shopify.Collect: The created Collect object.
+    """
     collect = shopify.Collect()
     collect.product_id = product_id
     collect.collection_id = collection_id
@@ -137,7 +143,17 @@ def add_product_to_collection(self, product_id, collection_id):
     return collect
 
 #Get all collections
-def get_all_collections(self, collection_type=None):
+def get_all_collections(collection_type: Optional[str] = None) -> Union[List[shopify.CustomCollection], List[shopify.SmartCollection], List[Union[shopify.CustomCollection, shopify.SmartCollection]]]:
+    """Fetch all collections of a specified type.
+
+    Args:
+        collection_type (str, optional): The type of the collection. 
+            It must be 'custom', 'smart', or None. Defaults to None.
+
+    Returns:
+        Union[List[shopify.CustomCollection], List[shopify.SmartCollection], List[Union[shopify.CustomCollection, shopify.SmartCollection]]]:
+            The collections of the specified type.
+    """
     if collection_type == "custom":
         return shopify.CustomCollection.find()
     elif collection_type == "smart":
@@ -150,7 +166,18 @@ def get_all_collections(self, collection_type=None):
         raise ValueError("Invalid collection type. Must be 'custom', 'smart', or None.")
 
 #Update a collection
-def update_collection(self, collection_id, title=None, collection_type=None):
+def update_collection(collection_id: int, title: Optional[str] = None, collection_type: Optional[str] = None) -> Union[shopify.CustomCollection, shopify.SmartCollection]:
+    """Update a collection.
+
+    Args:
+        collection_id (int): The ID of the collection.
+        title (str, optional): The new title of the collection. Defaults to None.
+        collection_type (str, optional): The type of the collection. 
+            It must be 'custom', 'smart', or None. Defaults to None.
+
+    Returns:
+        Union[shopify.CustomCollection, shopify.SmartCollection]: The updated collection.
+    """
     if collection_type == "custom" or collection_type is None:
         collection = shopify.CustomCollection.find(collection_id)
     elif collection_type == "smart":
@@ -165,42 +192,94 @@ def update_collection(self, collection_id, title=None, collection_type=None):
     return collection
 
 #Delete a collection
-def delete_collection(self, collection_id, collection_type=None):
+def delete_collection(collection_id: int, collection_type: Optional[str] = None) -> None:
+    """Delete a collection.
+
+    Args:
+        collection_id (int): The ID of the collection.
+        collection_type (str, optional): The type of the collection. 
+            It must be 'custom', 'smart', or None. Defaults to None.
+    """
     if collection_type == "custom" or collection_type is None:
         collection = shopify.CustomCollection.find(collection_id)
     elif collection_type == "smart":
         collection = shopify.SmartCollection.find(collection_id)
     else:
         raise ValueError("Invalid collection type. Must be 'custom', 'smart', or None.")
-
+    
     collection.destroy()
 
 #Get all themes:
-def get_all_themes(self):
+def get_all_themes() -> List[shopify.Theme]:
+    """Fetch all themes.
+
+    Returns:
+        List[shopify.Theme]: List of all themes.
+    """
     return shopify.Theme.find()
 
 #Get the active theme:
-def get_active_theme(self):
-    themes = self.get_all_themes()
+def get_active_theme() -> Optional[shopify.Theme]:
+    """Fetch the active theme.
+
+    Returns:
+        Optional[shopify.Theme]: The active theme, if any.
+    """
+    themes = get_all_themes()
     active_theme = [theme for theme in themes if theme.role == "main"]
     return active_theme[0] if active_theme else None
 
 #Get theme assets:
-def get_theme_assets(self, theme_id):
+def get_theme_assets(theme_id: int) -> List[shopify.Asset]:
+    """Fetch all assets of a theme.
+
+    Args:
+        theme_id (int): The ID of the theme.
+
+    Returns:
+        List[shopify.Asset]: List of all assets of the theme.
+    """
     return shopify.Asset.find(theme_id=theme_id)
 
+
 #Get a specific theme asset:
-def get_theme_asset(self, theme_id, asset_key):
+def get_theme_asset(theme_id: int, asset_key: str) -> shopify.Asset:
+    """Fetch a specific asset of a theme.
+
+    Args:
+        theme_id (int): The ID of the theme.
+        asset_key (str): The key of the asset.
+
+    Returns:
+        shopify.Asset: The specified asset.
+    """
     return shopify.Asset.find(asset_key, theme_id=theme_id)
 
 #Update a theme asset:
-def update_theme_asset(self, theme_id, asset_key, new_asset_value):
-    asset = self.get_theme_asset(theme_id, asset_key)
+def update_theme_asset(theme_id: int, asset_key: str, new_asset_value: str) -> shopify.Asset:
+    """Update a theme asset.
+
+    Args:
+        theme_id (int): The ID of the theme.
+        asset_key (str): The key of the asset.
+        new_asset_value (str): The new value of the asset.
+
+    Returns:
+        shopify.Asset: The updated asset.
+    """
+    asset = get_theme_asset(theme_id, asset_key)
     asset.value = new_asset_value
     asset.save()
     return asset
 
 #Delete a theme asset:
-def delete_theme_asset(self, theme_id, asset_key):
-    asset = self.get_theme_asset(theme_id, asset_key)
+def delete_theme_asset(theme_id: int, asset_key: str) -> None:
+    """Delete a theme asset.
+
+    Args:
+        theme_id (int): The ID of the theme.
+        asset_key (str): The key of the asset.
+    """
+    asset = get_theme_asset(theme_id, asset_key)
     asset.destroy()
+
