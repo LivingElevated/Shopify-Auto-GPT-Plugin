@@ -18,7 +18,6 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
     """
     Auto GPT integrations using ShopifyAPI
     """
-    import shop
     
     def __init__(self):
         super().__init__()
