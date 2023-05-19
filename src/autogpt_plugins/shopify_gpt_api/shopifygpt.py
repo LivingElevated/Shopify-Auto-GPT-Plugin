@@ -58,9 +58,31 @@ def get_all_products() -> List[Any]:
     """
     return shopify.Product.find()
 
+#Search products by title:
 
-def update_product(self, product_id, title=None, description=None):
-    product = self.get_product(product_id)
+def search_products_by_title(title: str) -> List[shopify.Product]:
+    """Search products by title in Shopify.
+
+    Args:
+        title (str): Title of the products to search for.
+
+    Returns:
+        List[shopify.Product]: List of products that match the title.
+    """
+    return shopify.Product.find(title=title)
+
+def update_product(product_id: str, title: Optional[str] = None, description: Optional[str] = None) -> shopify.Product:
+    """Update a product on Shopify.
+
+    Args:
+        product_id (str): The ID of the product to update.
+        title (Optional[str], optional): The new title of the product. Defaults to None.
+        description (Optional[str], optional): The new description of the product. Defaults to None.
+
+    Returns:
+        shopify.Product: The updated product.
+    """
+    product = get_product(product_id)
 
     if title:
         product.title = title
@@ -71,12 +93,27 @@ def update_product(self, product_id, title=None, description=None):
     product.save()
     return product
 
-def delete_product(self, product_id):
-    product = self.get_product(product_id)
+def delete_product(product_id: str) -> None:
+    """Delete a product from Shopify.
+
+    Args:
+        product_id (str): The ID of the product to delete.
+    """
+    product = get_product(product_id)
     product.destroy()
 
+
 #Create a collection
-def create_collection(self, title, collection_type="custom"):
+def create_collection(title: str, collection_type: str = "custom") -> Union[shopify.CustomCollection, shopify.SmartCollection]:
+    """Create a new collection on Shopify.
+
+    Args:
+        title (str): The title of the new collection.
+        collection_type (str, optional): The type of the collection. Can be either 'custom' or 'smart'. Defaults to "custom".
+
+    Returns:
+        Union[shopify.CustomCollection, shopify.SmartCollection]: The newly created collection.
+    """
     if collection_type == "custom":
         collection = shopify.CustomCollection()
     elif collection_type == "smart":
@@ -87,6 +124,9 @@ def create_collection(self, title, collection_type="custom"):
     collection.title = title
     collection.save()
     return collection
+
+
+
 
 #Add a product to a collection:
 def add_product_to_collection(self, product_id, collection_id):
@@ -134,10 +174,6 @@ def delete_collection(self, collection_id, collection_type=None):
         raise ValueError("Invalid collection type. Must be 'custom', 'smart', or None.")
 
     collection.destroy()
-
-#Search products by title:
-def search_products_by_title(self, title):
-    return shopify.Product.find(title=title)
 
 #Get all themes:
 def get_all_themes(self):
