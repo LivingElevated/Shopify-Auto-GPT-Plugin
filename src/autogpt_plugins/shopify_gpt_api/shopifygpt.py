@@ -35,7 +35,7 @@ def get_all_products() -> List[Any]:
     Returns:
         List[Any]: List of all products.
     """
-    return plugin.client.Product.find()
+    return shopify.Product.find()
 
 def get_all_product(self):
     return plugin.shopify.Product.find()
