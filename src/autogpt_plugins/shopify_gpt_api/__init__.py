@@ -272,6 +272,7 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
             create_product,
             get_product,
             get_all_products,
+            get_all_product_names,
             update_product,
             delete_product,
             create_collection,
@@ -309,6 +310,12 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
             "get_all_products",
             {},
             get_all_products,
+        )
+        prompt.add_command(
+            "Get All Product Names",
+            "get_all_product_names",
+            {},
+            get_all_product_names,
         )
         prompt.add_command(
             "Update Product",

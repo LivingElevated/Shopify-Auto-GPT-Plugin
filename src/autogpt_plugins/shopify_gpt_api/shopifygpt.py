@@ -58,8 +58,17 @@ def get_all_products() -> List[Any]:
     """
     return shopify.Product.find()
 
-#Search products by title:
+def get_all_product_names():
+    """Fetch all product names from Shopify.
 
+    Returns:
+        List[Any]: List of all products by name.
+    """
+    products = get_all_products()
+    product_names = [product.title for product in products]
+    return product_names
+
+#Search products by title:
 def search_products_by_title(title: str) -> List[shopify.Product]:
     """Search products by title in Shopify.
 
