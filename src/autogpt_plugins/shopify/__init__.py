@@ -4,10 +4,11 @@ from typing import Any, Dict, List, Optional, Tuple, TypeVar, TypedDict
 
 import shopify
 from auto_gpt_plugin_template import AutoGPTPluginTemplate
-
+from .shopifygpt import ShopifyGPT
 
 PromptGenerator = TypeVar("PromptGenerator")
 
+command = ShopifyGPT()
 
 class Message(TypedDict):
     role: str
@@ -269,25 +270,6 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
             PromptGenerator: The prompt generator.
         """
 
-        from .shopifygpt import (
-            create_product,
-            get_product,
-            get_all_products,
-            update_product,
-            delete_product,
-            create_collection,
-            add_product_to_collection,
-            get_all_collections,
-            update_collection,
-            delete_collection,
-            search_products_by_title,
-            get_all_themes,
-            get_active_theme,
-            get_theme_assets,
-            get_theme_asset,
-            update_theme_asset,
-            delete_theme_asset,
-        )
         prompt.add_command(
             "Create Product",
             "create_product",
@@ -295,7 +277,7 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
                 "title": "<title>",
                 "description": "<description>"
             },
-            create_product,
+            command.create_product,
         )
         prompt.add_command(
             "Get Product",
@@ -303,13 +285,13 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
             {
                 "product_id": "<product_id>"
             },
-            get_product,
+            command.get_product,
         )
         prompt.add_command(
             "Get All Products",
             "get_all_products",
             {},
-            get_all_products,
+            command.get_all_products,
         )
         prompt.add_command(
             "Update Product",
@@ -319,7 +301,7 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
                 "title": "<title>",
                 "description": "<description>"
             },
-            update_product,
+            command.update_product,
         )
         prompt.add_command(
             "Delete Product",
@@ -327,7 +309,7 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
             {
                 "product_id": "<product_id>"
             },
-            delete_product,
+            command.delete_product,
         )
         prompt.add_command(
             "Create Collection",
@@ -336,7 +318,7 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
                 "title": "<title>",
                 "collection_type": "<collection_type>"
             },
-            create_collection,
+            command.create_collection,
         )
         prompt.add_command(
             "Create Collection",
@@ -345,7 +327,7 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
                 "title": "<title>",
                 "collection_type": "<collection_type>"
             },
-            create_collection,
+            command.create_collection,
         )
         prompt.add_command(
             "Add Product to Collection",
@@ -354,7 +336,7 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
                 "product_id": "<product_id>",
                 "collection_id": "<collection_id>"
             },
-            add_product_to_collection,
+            command.add_product_to_collection,
         )
         prompt.add_command(
             "Get All Collections",
@@ -362,7 +344,7 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
             {
                 "collection_type": "<collection_type>"
             },
-            get_all_collections,
+            command.get_all_collections,
         )
         prompt.add_command(
             "Update Collection",
@@ -372,7 +354,7 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
                 "title": "<title>",
                 "collection_type": "<collection_type>"
             },
-            update_collection,
+            command.update_collection,
         )
         prompt.add_command(
             "Delete Collection",
@@ -381,7 +363,7 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
                 "collection_id": "<collection_id>",
                 "collection_type": "<collection_type>"
             },
-            delete_collection,
+            command.delete_collection,
         )
         prompt.add_command(
             "Search Products by Title",
@@ -389,19 +371,19 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
             {
                 "title": "<title>"
             },
-            search_products_by_title,
+            command.search_products_by_title,
         )
         prompt.add_command(
             "Get All Themes",
             "get_all_themes",
             {},
-            get_all_themes,
+            command.get_all_themes,
         )
         prompt.add_command(
             "Get Active Theme",
             "get_active_theme",
             {},
-            get_active_theme,
+            command.get_active_theme,
         )
         prompt.add_command(
             "Get Theme Assets",
@@ -409,7 +391,7 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
             {
                 "theme_id": "<theme_id>"
             },
-            get_theme_assets,
+            command.get_theme_assets,
         )
         prompt.add_command(
             "Get Theme Asset",
@@ -418,7 +400,7 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
                 "theme_id": "<theme_id>",
                 "asset_key": "<asset_key>"
             },
-            get_theme_asset,
+            command.get_theme_asset,
         )
         prompt.add_command(
             "Update Theme Asset",
@@ -437,7 +419,7 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
                 "theme_id": "<theme_id>",
                 "asset_key": "<asset_key>"
             },
-            delete_theme_asset,
+            command.delete_theme_asset,
         )
 
         if self.shop:
