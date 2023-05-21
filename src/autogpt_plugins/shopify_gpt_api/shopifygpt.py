@@ -39,26 +39,38 @@ def create_product(title: str, description: Optional[str] = None) -> shopify.Pro
 
     return product
 
-
-def get_product(product_id: str) -> shopify.Product:
-    """Fetch a product from Shopify.
+def get_product(product_identifier: Union[str, int]) -> Union[shopify.Product, None]:
+    """Fetch a product from Shopify using either its ID or its title.
 
     Args:
-        product_id (str): The ID of the product to fetch.
+        product_identifier (Union[str, int]): The ID or the title of the product to fetch.
 
     Returns:
-        shopify.Product: The requested product.
+        Union[shopify.Product, None]: The requested product if found, or None otherwise.
     """
-    return shopify.Product.find(product_id)
+    # If the identifier is numeric, it's treated as an ID.
+    if str(product_identifier).isdigit():
+        return shopify.Product.find(int(product_identifier))
 
+    # If not, it's treated as a title.
+    else:
+        all_products = shopify.Product.find()
+        for product in all_products:
+            if product.title == product_identifier:
+                return product
+    
+    # Return None if no matching product was found.
+    return None
 
-def get_all_products() -> List[Any]:
-    """Fetch all products from Shopify.
+def get_all_products() -> List[Tuple[int, str]]:
+    """Fetch all products from Shopify and return their IDs and names.
 
     Returns:
-        List[Any]: List of all products.
+        List[Tuple[int, str]]: List of all products represented as tuples (id, name).
     """
-    return shopify.Product.find()
+    products = shopify.Product.find()
+    product_info = [(product.id, product.title) for product in products]
+    return product_info
 
 def get_all_product_names():
     """Fetch all product names from Shopify.
