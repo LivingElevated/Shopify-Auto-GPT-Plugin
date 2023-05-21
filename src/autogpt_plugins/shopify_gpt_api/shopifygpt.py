@@ -145,8 +145,10 @@ def analyze_sales() -> Dict[str, Any]:
     product_sales = {k: f"${v:.2f}" for k, v in dict(product_sales).items()}
 
     # Calculate the percentage contribution of each product to total sales and format it as a string with a percent symbol
-    product_percentage_contribution = {product: f"{round((float(sales.replace('$', '')) / float(total_sales.replace('$', ''))) * 100, 2)}%" 
-                                        for product, sales in product_sales.items() if sales != '$0.00'}
+    product_percentage_contribution = {}
+    for product, sales in product_sales.items():
+        percentage = round((sales / total_sales) * 100, 2)  # round to 2 decimal places
+        product_percentage_contribution[product] = f"{percentage}%"
 
     # Find out the slow-moving products (products that contribute 5% or less to total sales)
     slow_moving_products = [product.title for product in all_products if product.title not in product_sales or float(product_percentage_contribution.get(product.title, '0%').replace('%', '')) <= 5]
