@@ -115,67 +115,85 @@ def delete_product(product_id: str) -> None:
 
 def analyze_sales() -> Dict[str, Any]:
     """Analyze sales data and return insights."""
-    # Get all products and initialize their sales to 0
-    products = shopify.Product.find()
+
+    # Fetch all orders and all products
+    orders = shopify.Order.find(status="any")
+    all_products = shopify.Product.find()
+    
+    total_sales = sum(float(order.total_price) for order in orders)  # Compute total sales
+
+    # Calculate sales per product
     product_sales = defaultdict(int)
-
-    # Fetch all orders
-    orders = shopify.Order.find(status="any")  
-
-    # Calculate the sales for each product
     for order in orders:
         for line_item in order.line_items:
-            product_sales[line_item.title] += line_item.quantity
-
-    # Find out the slow-moving products
-    slow_moving_products = [product for product in product_sales if product_sales[product] == 0]
-
-    # Calculate total sales
-    total_sales = sum(product_sales.values())
+            product_sales[line_item.title] += float(line_item.price)
 
     # Calculate the percentage contribution of each product to total sales
-    product_percentage_contribution = {product: (sales / total_sales) * 100 for product, sales in product_sales.items()}
+    product_percentage_contribution = {product: round((sales / total_sales) * 100, 2) for product, sales in product_sales.items() if sales != 0}
+
+    # Find out the slow-moving products (products that contribute 5% or less to total sales)
+    slow_moving_products = [product.title for product in all_products if product.title not in product_sales or product_percentage_contribution.get(product.title, 0) <= 5]
 
     return {
-        "total_sales": total_sales,
-        "slow_moving_products": slow_moving_products,
-        "product_percentage_contribution": product_percentage_contribution
+        "total_sales": total_sales, 
+        "product_sales": product_sales, 
+        "product_percentage_contribution": product_percentage_contribution, 
+        "slow_moving_products": slow_moving_products
     }
 
-def analyze_customer_behavior() -> Dict[str, Dict[str, object]]:
-    """Analyze customer behavior and return insights."""
-    customer_orders = {}
-    customers = shopify.Customer.find() # Fetch all customers
+def analyze_customer_behavior() -> Dict[str, Any]:
+    """Analyze customer behavior data and return insights."""
+
+    customers = shopify.Customer.find()  # Fetch all customers
+    customer_behavior = []
 
     for customer in customers:
-        orders = shopify.Order.find(customer_id=customer.id) # Fetch orders for each customer
-        customer_orders[customer.id] = {
-            'name': customer.first_name + ' ' + customer.last_name,
-            'number_of_orders': len(orders),
-            'order_details': []
-        }
-        
+        # Get all orders by this customer
+        orders = shopify.Order.find(customer_id=customer.id)
+
+        total_spent_customer = 0  # Total amount spent by the customer
+        total_orders = len(orders)  # Total number of orders by the customer
+        order_details_list = []  # List to store details of each order
+
         for order in orders:
-            total_spent = 0
-            categories = []
-            
+            total_spent_order = 0  # Total amount spent in this order
+            categories = []  # List to store the categories of products in this order
+
             for line_item in order.line_items:
-                total_spent += line_item.price
+                total_spent_order += line_item.price
                 product = shopify.Product.find(line_item.product_id)
-                
+
                 if product and product.product_type not in categories:
                     categories.append(product.product_type)
-            
+
             order_details = {
                 'order_id': order.id,
                 'date': order.created_at,
                 'categories': categories,
-                'total_spent': total_spent
+                'total_spent': total_spent_order
             }
-            
-            customer_orders[customer.id]['order_details'].append(order_details)
 
-    return customer_orders
+            order_details_list.append(order_details)
+            total_spent_customer += total_spent_order
+
+        # If customer has no first name or last name, use "" instead
+        first_name = customer.first_name if customer.first_name else ""
+        last_name = customer.last_name if customer.last_name else ""
+
+        # If customer has no email, use "" instead
+        email = customer.email if customer.email else ""
+
+        customer_behavior.append(
+            {
+                "name": first_name + " " + last_name,
+                "email": email,
+                "total_spent": total_spent_customer,
+                "total_orders": total_orders,
+                "order_details": order_details_list
+            }
+        )
+
+    return {"customer_behavior": customer_behavior}
 
 def stock_management() -> Dict[str, Any]:
     """Manage stock and identify low stock products."""
