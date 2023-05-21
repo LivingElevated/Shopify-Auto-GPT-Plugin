@@ -1,5 +1,7 @@
 import shopify
 import os
+from collections import defaultdict
+from datetime import datetime, timedelta
 from shopify.version import VERSION
 from shopify.session import Session, ValidationException
 from shopify.resources import *
@@ -111,6 +113,230 @@ def delete_product(product_id: str) -> None:
     product = get_product(product_id)
     product.destroy()
 
+def analyze_sales() -> Dict[str, Any]:
+    """Analyze sales data and return insights."""
+    # Get all products and initialize their sales to 0
+    products = shopify.Product.find()
+    product_sales = defaultdict(int)
+
+    # Fetch all orders
+    orders = shopify.Order.find(status="any")  
+
+    # Calculate the sales for each product
+    for order in orders:
+        for line_item in order.line_items:
+            product_sales[line_item.title] += line_item.quantity
+
+    # Find out the slow-moving products
+    slow_moving_products = [product for product in product_sales if product_sales[product] == 0]
+
+    # Calculate total sales
+    total_sales = sum(product_sales.values())
+
+    # Calculate the percentage contribution of each product to total sales
+    product_percentage_contribution = {product: (sales / total_sales) * 100 for product, sales in product_sales.items()}
+
+    return {
+        "total_sales": total_sales,
+        "slow_moving_products": slow_moving_products,
+        "product_percentage_contribution": product_percentage_contribution
+    }
+
+def analyze_customer_behavior() -> Dict[str, Dict[str, object]]:
+    """Analyze customer behavior and return insights."""
+    customer_orders = {}
+    customers = shopify.Customer.find() # Fetch all customers
+
+    for customer in customers:
+        orders = shopify.Order.find(customer_id=customer.id) # Fetch orders for each customer
+        customer_orders[customer.id] = {
+            'name': customer.first_name + ' ' + customer.last_name,
+            'number_of_orders': len(orders),
+            'order_details': []
+        }
+        
+        for order in orders:
+            total_spent = 0
+            categories = []
+            
+            for line_item in order.line_items:
+                total_spent += line_item.price
+                product = shopify.Product.find(line_item.product_id)
+                
+                if product and product.product_type not in categories:
+                    categories.append(product.product_type)
+            
+            order_details = {
+                'order_id': order.id,
+                'date': order.created_at,
+                'categories': categories,
+                'total_spent': total_spent
+            }
+            
+            customer_orders[customer.id]['order_details'].append(order_details)
+
+    return customer_orders
+
+def stock_management() -> Dict[str, Any]:
+    """Manage stock and identify low stock products."""
+
+    # Fetch all products
+    products = shopify.Product.find()
+
+    # Initialize a list to store low stock products
+    low_stock_products = []
+
+    # Check inventory quantity for each variant of each product
+    for product in products:
+        for variant in product.variants:
+            if variant.inventory_quantity <= 10:
+                low_stock_product = {
+                    "product_id": product.id,
+                    "product_name": product.title,
+                    "variant_id": variant.id,
+                    "variant_name": variant.title,
+                    "inventory_quantity": variant.inventory_quantity,
+                }
+                low_stock_products.append(low_stock_product)
+
+    return {"low_stock_products": low_stock_products}
+
+def order_fulfillment() -> Dict[str, Any]:
+    """Fulfill all unfulfilled orders."""
+
+    # Fetch all orders
+    orders = shopify.Order.find(status="any")
+
+    # Initialize a list to store fulfilled orders
+    fulfilled_orders = []
+
+    # Check each order and fulfill it if it's not already fulfilled
+    for order in orders:
+        if not order.fulfillment_status or order.fulfillment_status == "partial":
+            for line_item in order.line_items:
+                fulfillment = shopify.Fulfillment(
+                    {
+                        "order_id": order.id,
+                        "line_items": [{"id": line_item.id}],
+                        "tracking_company": None,  # Optional: add tracking company here
+                        "tracking_number": None,  # Optional: add tracking number here
+                        "notify_customer": True,  # Optional: set to False if you don't want to notify the customer
+                    }
+                )
+                fulfillment.save()
+                fulfilled_order = {
+                    "order_id": order.id,
+                    "order_name": order.name,
+                    "fulfillment_status": order.fulfillment_status,
+                }
+                fulfilled_orders.append(fulfilled_order)
+
+    return {"fulfilled_orders": fulfilled_orders}
+
+def manage_discounts_and_offers() -> Dict[str, Any]:
+    """Manage discounts and offers."""
+    # Fetch all active discounts
+    active_discounts = shopify.PriceRule.find()
+
+    # Initialize variables
+    expired_discounts = []
+    upcoming_discounts = []
+
+    # Check the start and end dates for each discount
+    for discount in active_discounts:
+        if discount.ends_at and discount.ends_at < datetime.now():
+            expired_discounts.append(discount)
+        elif discount.starts_at and discount.starts_at > datetime.now():
+            upcoming_discounts.append(discount)
+
+    # Delete expired discounts
+    for discount in expired_discounts:
+        discount.destroy()
+
+    # Prepare details about active and upcoming discounts
+    active_discounts_details = [
+        {"id": discount.id, "name": discount.title, "ends_at": discount.ends_at}
+        for discount in active_discounts if discount not in expired_discounts
+    ]
+    upcoming_discounts_details = [
+        {"id": discount.id, "name": discount.title, "starts_at": discount.starts_at}
+        for discount in upcoming_discounts
+    ]
+
+    return {
+        "active_discounts": active_discounts_details,
+        "upcoming_discounts": upcoming_discounts_details,
+    }
+
+def customer_service() -> Dict[str, Any]:
+    """Handle customer inquiries or complaints."""
+    """This assumes that you have a system in place for categorizing and tagging inquiries or complaints from customers."""
+    """Please note that this is a very simplified example. In reality, your customer inquiries could be stored elsewhere (for example, in a separate customer service software or a database), and resolving inquiries could involve much more than just updating a status field."""
+
+    # Fetch all customers
+    customers = shopify.Customer.find()
+    customer_inquiries = []
+
+    for customer in customers:
+        # This is a hypothetical example assuming there's a system in place to categorize and tag inquiries
+        if customer.metafields_global['inquiry_status'] == 'pending':
+            response = {}  # Here would be the logic for generating a response based on the inquiry details
+
+            # Update the customer inquiry status
+            customer.metafields_global['inquiry_status'] = 'resolved'
+            customer.save()
+
+            # Add response to the list
+            customer_inquiries.append({
+                "customer_id": customer.id,
+                "customer_name": f"{customer.first_name} {customer.last_name}",
+                "response": response
+            })
+
+    return {"customer_inquiries": customer_inquiries}
+
+def analyze_stock_levels() -> Dict[str, int]:
+    """Analyze stock levels for all products and return the product ID and quantity."""
+    stock_levels = {}
+
+    products = shopify.Product.find()
+    for product in products:
+        for variant in product.variants:
+            stock_levels[variant.id] = variant.inventory_quantity
+
+    return stock_levels
+
+def get_unfulfilled_orders() -> List[Dict[str, object]]:
+    """Get a list of all orders that have not yet been fulfilled."""
+    unfulfilled_orders = []
+
+    orders = shopify.Order.find(fulfillment_status='unfulfilled')
+    for order in orders:
+        unfulfilled_orders.append({
+            'order_id': order.id,
+            'customer_id': order.customer.id,
+            'name': order.customer.first_name + ' ' + order.customer.last_name,
+            'order_value': sum(line_item.price for line_item in order.line_items),
+        })
+
+    return unfulfilled_orders
+
+def get_customers_with_returns() -> List[Dict[str, object]]:
+    """Get a list of all customers who have made returns."""
+    customers_with_returns = []
+
+    orders = shopify.Order.find()
+    for order in orders:
+        for refund in order.refunds:
+            if refund:
+                customers_with_returns.append({
+                    'customer_id': order.customer.id,
+                    'name': order.customer.first_name + ' ' + order.customer.last_name,
+                    'order_id': order.id,
+                    'refund_amount': sum(line_item.price for line_item in refund.refund_line_items),
+                })
+
+    return customers_with_returns
 
 #Create a collection
 def create_collection(title: str, collection_type: str = "custom") -> Union[shopify.CustomCollection, shopify.SmartCollection]:

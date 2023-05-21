@@ -22,7 +22,7 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
     def __init__(self):
         super().__init__()
         self._name = "Shopify-AutoGPT"
-        self._version = "0.0.2"
+        self._version = "0.1.0"
         self._description = "AutoGPT integrations using ShopifyAPI."
         self.shopify_api_key = os.getenv("SHOPIFY_API_KEY")
         self.shopify_api_secret = os.getenv("SHOPIFY_API_SECRET")
@@ -275,6 +275,15 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
             get_all_product_names,
             update_product,
             delete_product,
+            analyze_sales,
+            analyze_customer_behavior,
+            stock_management,
+            order_fulfillment,
+            manage_discounts_and_offers,
+            customer_service,
+            analyze_stock_levels,
+            get_unfulfilled_orders,
+            get_customers_with_returns,
             create_collection,
             add_product_to_collection,
             get_all_collections,
@@ -336,13 +345,65 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
             delete_product,
         )
         prompt.add_command(
-            "Create Collection",
-            "create_collection",
-            {
-                "title": "<title>",
-                "collection_type": "<collection_type>"
-            },
-            create_collection,
+            "Analyze Sales",
+            "analyze_sales",
+            {},
+            analyze_sales,
+        )
+
+        prompt.add_command(
+            "Analyze Customer Behavior",
+            "analyze_customer_behavior",
+            {},
+            analyze_customer_behavior,
+        )
+
+        prompt.add_command(
+            "Manage Stock",
+            "stock_management",
+            {},
+            stock_management,
+        )
+
+        prompt.add_command(
+            "Manage Order Fulfillment",
+            "order_fulfillment",
+            {},
+            order_fulfillment,
+        )
+
+        prompt.add_command(
+            "Manage Discounts and Offers",
+            "manage_discounts_and_offers",
+            {},
+            manage_discounts_and_offers,
+        )
+
+        prompt.add_command(
+            "Manage Customer Service",
+            "customer_service",
+            {},
+            customer_service,
+        )
+        prompt.add_command(
+            "Analyze Stock Levels",
+            "analyze_stock_levels",
+            {},
+            analyze_stock_levels,
+        )
+
+        prompt.add_command(
+            "Get Unfulfilled Orders",
+            "get_unfulfilled_orders",
+            {},
+            get_unfulfilled_orders,
+        )
+
+        prompt.add_command(
+            "Get Customers With Returns",
+            "get_customers_with_returns",
+            {},
+            get_customers_with_returns,
         )
         prompt.add_command(
             "Create Collection",
