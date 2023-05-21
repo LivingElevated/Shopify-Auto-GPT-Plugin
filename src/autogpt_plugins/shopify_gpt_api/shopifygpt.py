@@ -121,6 +121,7 @@ def analyze_sales() -> Dict[str, Any]:
     all_products = shopify.Product.find()
     
     total_sales = sum(float(order.total_price) for order in orders)  # Compute total sales
+    total_sales = f"${total_sales:.2f}"
 
     # Calculate sales per product
     product_sales = defaultdict(int)
@@ -128,11 +129,15 @@ def analyze_sales() -> Dict[str, Any]:
         for line_item in order.line_items:
             product_sales[line_item.title] += float(line_item.price)
 
-    # Calculate the percentage contribution of each product to total sales
-    product_percentage_contribution = {product: round((sales / total_sales) * 100, 2) for product, sales in product_sales.items() if sales != 0}
+    # Convert to regular dict and add dollar sign
+    product_sales = {k: f"${v:.2f}" for k, v in dict(product_sales).items()}
+
+    # Calculate the percentage contribution of each product to total sales and format it as a string with a percent symbol
+    product_percentage_contribution = {product: f"{round((float(sales.replace('$', '')) / float(total_sales.replace('$', ''))) * 100, 2)}%" 
+                                        for product, sales in product_sales.items() if sales != '$0.00'}
 
     # Find out the slow-moving products (products that contribute 5% or less to total sales)
-    slow_moving_products = [product.title for product in all_products if product.title not in product_sales or product_percentage_contribution.get(product.title, 0) <= 5]
+    slow_moving_products = [product.title for product in all_products if product.title not in product_sales or float(product_percentage_contribution.get(product.title, '0%').replace('%', '')) <= 5]
 
     return {
         "total_sales": total_sales, 
