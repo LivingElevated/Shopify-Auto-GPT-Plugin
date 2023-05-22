@@ -368,7 +368,49 @@ def order_fulfillment() -> Dict[str, Any]:
 
     return {"fulfilled_orders": fulfilled_orders}
 
-def manage_discounts_and_offers() -> Dict[str, Any]:
+def manage_discounts_and_offers(product_identifiers: Union[List[int], List[str]], discount_value: float) -> Dict[str, Any]:
+    """Manage discounts and offers for specific products."""
+
+    if not product_identifiers or not discount_value:
+        return {"error": "product_identifiers and discount_value are required"}
+
+    # Fetch all products
+    products = shopify.Product.find()
+
+    # Filter products based on identifiers
+    if isinstance(product_identifiers[0], int):
+        # If product_identifiers are IDs
+        filtered_products = [product for product in products if product.id in product_identifiers]
+    else:
+        # If product_identifiers are names
+        filtered_products = [product for product in products if product.title in product_identifiers]
+
+    # Create a price rule and discount code for each product
+    for product in filtered_products:
+        price_rule = shopify.PriceRule.create({
+            "title": f"{discount_value * 100}% off {product.title}",
+            "target_type": "line_item",
+            "target_selection": "entitled",
+            "allocation_method": "across",
+            "value_type": "percentage",
+            "value": -discount_value,  # Note: value is negative
+            "customer_selection": "all",
+            "starts_at": "2023-05-14T00:00:00Z",  # Set start date
+        })
+
+        # Add product to entitled product ids
+        price_rule.entitled_product_ids.append(product.id)
+        price_rule.save()
+
+        # Create a discount code
+        shopify.DiscountCode.create({
+            "price_rule_id": price_rule.id,
+            "code": f"{discount_value * 100}OFF{product.title.upper().replace(' ', '')}"
+        })
+
+    return {"status": "Discounts and offers created successfully"}
+
+def manage_discounts_and_offers_old() -> Dict[str, Any]:
     """Manage discounts and offers."""
     # Fetch all active discounts
     active_discounts = shopify.PriceRule.find()
