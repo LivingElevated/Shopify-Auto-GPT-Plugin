@@ -125,6 +125,29 @@ def delete_product(product_id: str) -> None:
     product = get_product(product_id)
     product.destroy()
 
+def get_all_orders() -> List[Dict[str, Any]]:
+    """Fetch all orders from Shopify and return insights."""
+
+    orders = shopify.Order.find()  # Fetch all orders
+    all_orders = []
+
+    for order in orders:
+        order_details = {
+            "order_id": order.id,
+            "order_date": order.created_at,
+            "customer": order.customer.id if order.customer else None,
+            "line_items": [{
+                "product_id": item.product_id,
+                "product_name": shopify.Product.find(item.product_id).title if item.product_id else None,
+                "quantity": item.quantity,
+                "price": item.price
+            } for item in order.line_items],
+            "total_price": order.total_price,
+        }
+        all_orders.append(order_details)
+
+    return all_orders
+
 def analyze_sales() -> Dict[str, Any]:
     """Analyze sales data and return insights."""
 
