@@ -262,19 +262,19 @@ def analyze_customer_behavior() -> Dict[str, Any]:
             continue
 
         total_spent_order = 0
-        categories = []
+        purchases = []
         for item in order.line_items:
             product_name = None
             if item.product_id:
                 product = shopify.Product.find(item.product_id)
                 product_name = product.title if product else None
             total_spent_order += float(item.price)
-            categories.append(product_name)
+            purchases.append(product_name)
 
         order_details = {
             'order_id': order.id,
             'date': order.created_at,
-            'categories': categories,
+            'purchases': purchases,
             'total_spent': total_spent_order
         }
 
@@ -282,6 +282,9 @@ def analyze_customer_behavior() -> Dict[str, Any]:
         customer_data['order_details'].append(order_details)
         customer_data['total_spent'] += total_spent_order
         customer_data['total_orders'] += 1
+
+        # Debug line to print the number of orders for each customer
+        print(f'Fetched {customer_data["total_orders"]} orders for customer {customer_id}')
 
     return {"customer_behavior": list(customer_behavior.values())}
 
