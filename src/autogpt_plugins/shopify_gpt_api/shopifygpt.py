@@ -312,6 +312,30 @@ def stock_management() -> Dict[str, Any]:
 
     return {"low_stock_products": low_stock_products}
 
+def analyze_shopify_store() -> Dict[str, Any]:
+    """Analyze the Shopify store and return insights."""
+
+    # Initialize a dictionary to store the analysis results
+    results = {}
+
+    # Analyze sales
+    sales_analysis = analyze_sales()
+    results["sales_analysis"] = sales_analysis
+
+    # Analyze customer behavior
+    customer_behavior_analysis = analyze_customer_behavior()
+    results["customer_behavior_analysis"] = customer_behavior_analysis
+
+    # Fetch all orders
+    all_orders = get_all_orders()
+    results["all_orders"] = all_orders
+
+    # Analyze stock management
+    stock_analysis = stock_management()
+    results["stock_analysis"] = stock_analysis
+
+    return results
+
 def order_fulfillment() -> Dict[str, Any]:
     """Fulfill all unfulfilled orders."""
 
