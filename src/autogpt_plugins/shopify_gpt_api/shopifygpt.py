@@ -151,34 +151,37 @@ def get_all_orders() -> List[Dict[str, Any]]:
 def analyze_sales() -> Dict[str, Any]:
     """Analyze sales data and return insights."""
 
-    # Fetch all orders and all products
+    # Get all orders and total sales
     orders = shopify.Order.find(status="any")
-    all_products = shopify.Product.find()
-    
-    total_sales = sum(float(order.total_price) for order in orders)  # Compute total sales
-    total_sales = f"${total_sales:.2f}"
+    total_sales = sum(order.total_price for order in orders)
 
-    # Calculate sales per product
+    # Initialize defaultdict to count sales per product
     product_sales = defaultdict(int)
+
     for order in orders:
         for line_item in order.line_items:
-            product_sales[line_item.title] += float(line_item.price)
+            product_sales[line_item.title] += line_item.price * line_item.quantity
 
-    # Convert to regular dict and add dollar sign
-    product_sales = {k: f"${v:.2f}" for k, v in dict(product_sales).items()}
+    # Calculate the percentage contribution of each product to total sales
+    product_percentage_contribution = {product: str(round((sales / total_sales) * 100, 2)) + '%' for product, sales in product_sales.items()}
+    for product, sales in product_sales.items():
+        percentage = round((sales / total_sales) * 100, 2)  # round to 2 decimal places
+        product_percentage_contribution[product] = f"{percentage}%"
 
-    # Calculate the percentage contribution of each product to total sales and format it as a string with a percent symbol
-    product_percentage_contribution = {product: f"{(float(sales) / float(total_sales)) * 100:.2f}%" for product, sales in product_sales.items()}
-
-    # Find out the slow-moving products (products that contribute 5% or less to total sales)
-    slow_moving_products = [product.title for product in all_products if product.title not in product_sales or float(product_percentage_contribution.get(product.title, '0%').replace('%', '')) <= 5]
+    # Find out the slow-moving products
+    slow_moving_products = []
+    all_products = shopify.Product.find()
+    for product in all_products:
+        if product.title not in product_sales or product_sales[product.title] / total_sales * 100 <= 5:
+            slow_moving_products.append(product.title)
 
     return {
-        "total_sales": total_sales, 
-        "product_sales": product_sales, 
-        "product_percentage_contribution": product_percentage_contribution, 
-        "slow_moving_products": slow_moving_products
+        "total_sales": f"${total_sales:.2f}",
+        "product_sales": {product: f"${sales:.2f}" for product, sales in product_sales.items()},
+        "product_percentage_contribution": product_percentage_contribution,
+        "slow_moving_products": slow_moving_products,
     }
+
 
 def analyze_customer_behavior() -> Dict[str, Any]:
     """Analyze customer behavior data and return insights."""
