@@ -284,7 +284,7 @@ def analyze_customer_behavior() -> Dict[str, Any]:
         customer_data['total_orders'] += 1
 
         # Debug line to print the number of orders for each customer
-        print(f'Fetched {customer_data["total_orders"]} orders for customer {customer_id}')
+        print(f'Fetched {customer_data["total_orders"]} orders for customer {customer_id} - {customer_data["name"]}')
 
     return {"customer_behavior": list(customer_behavior.values())}
 
