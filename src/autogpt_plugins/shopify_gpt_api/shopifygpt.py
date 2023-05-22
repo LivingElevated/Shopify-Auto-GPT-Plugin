@@ -186,52 +186,30 @@ def analyze_sales() -> Dict[str, Any]:
         "slow_moving_products": slow_moving_products,
     }
 
-def analyze_sales_old() -> Dict[str, Any]:
-    """Analyze sales data and return insights."""
-
-    # Fetch all orders and all products
-    orders = shopify.Order.find(status="any")
-    all_products = shopify.Product.find()
-    
-    total_sales = sum(float(order.total_price) for order in orders)  # Compute total sales
-    total_sales = f"${total_sales:.2f}"
-
-    # Calculate sales per product
-    product_sales = defaultdict(int)
-    product_sold_count = defaultdict(int)
-    for order in orders:
-        for line_item in order.line_items:
-            product_sales[line_item.title] += float(line_item.price)
-            product_sold_count[line_item.title] += line_item.quantity  # Assuming line_item has a 'quantity' attribute
-
-    # Convert to regular dicts and add dollar sign
-    product_sales = {k: f"${v:.2f}" for k, v in dict(product_sales).items()}
-    product_sold_count = dict(product_sold_count)
-
-    total_products_sold = sum(product_sold_count.values())
-
-    # Calculate the percentage contribution of each product to total sales and format it as a string with a percent symbol
-    product_percentage_contribution = {product: f"{round((count / total_products_sold) * 100, 2)}%" 
-                                        for product, count in product_sold_count.items() if count > 0}
-
-    # Find out the slow-moving products (products that contribute 5% or less to total sales)
-    slow_moving_products = [product.title for product in all_products if product.title not in product_sales or float(product_percentage_contribution.get(product.title, '0%').replace('%', '')) <= 5]
-
-    return {"total_sales": total_sales, "product_sales": product_sales, "product_percentage_contribution": product_percentage_contribution, "slow_moving_products": slow_moving_products, "product_sold_count": product_sold_count}
-
 def analyze_customer_behavior() -> Dict[str, Any]:
     """Analyze customer behavior data and return insights."""
 
     customers = shopify.Customer.find()  # Fetch all customers
     customer_behavior = []
+    print(f'Fetched {len(customers)} customers')  # Debug line
 
     all_orders = shopify.Order.find()  # Fetch all orders
     order_dict = defaultdict(list)
+
+
+    for customer in customers:
+        # Get all orders by this customer
+        orders = shopify.Order.find(customer_id=customer.id)
+        print(f'Fetched {len(orders)} orders for customer {customer.id}')  # Debug lin
 
     for order in all_orders:
         order_dict[order.customer.id].append(order)
 
     for customer in customers:
+    # Get all orders by this customer
+        orders = shopify.Order.find(customer_id=customer.id)
+        print(f'Fetched {len(orders)} orders for customer {customer.id}')  # Debug lin
+
         orders = order_dict.get(customer.id)
 
         if orders:
