@@ -132,6 +132,43 @@ def get_all_orders() -> List[Dict[str, Any]]:
     all_orders = []
 
     for order in orders:
+        try:
+            line_items = []
+            for item in order.line_items:
+                product_name = None
+                if item.product_id:
+                    product = shopify.Product.find(item.product_id)
+                    product_name = product.title if product else None
+
+                line_items.append({
+                    "product_id": item.product_id,
+                    "product_name": product_name,
+                    "quantity": item.quantity,
+                    "price": item.price
+                })
+
+            customer_id = order.customer.id if order.customer else None
+
+            order_details = {
+                "order_id": order.id,
+                "order_date": order.created_at,
+                "customer": customer_id,
+                "line_items": line_items,
+                "total_price": order.total_price,
+            }
+            all_orders.append(order_details)
+        except Exception as e:
+            print(f"Error processing order {order.id}: {e}")
+
+    return all_orders
+
+def get_all_orders_old() -> List[Dict[str, Any]]:
+    """Fetch all orders from Shopify and return insights."""
+
+    orders = shopify.Order.find()  # Fetch all orders
+    all_orders = []
+
+    for order in orders:
         order_details = {
             "order_id": order.id,
             "order_date": order.created_at,
