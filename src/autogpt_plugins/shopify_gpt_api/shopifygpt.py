@@ -237,6 +237,62 @@ def analyze_customer_behavior() -> Dict[str, Any]:
     customers = shopify.Customer.find()  # Fetch all customers
     customer_behavior = []
 
+    all_orders = get_all_orders()  # Fetch all orders using the get_all_orders() function
+    orders_by_customer = defaultdict(list)  # Create an empty dictionary to map customer IDs to orders
+
+    for order in all_orders:
+        customer_id = order["customer"]  # Get the customer ID from the order
+        if customer_id is not None:
+            orders_by_customer[customer_id].append(order)  # Append the order to the list of orders for this customer
+
+    for customer in customers:
+        # Get all orders for this customer using the dictionary
+        orders = orders_by_customer.get(customer.id, [])
+
+        total_spent_customer = 0  # Total amount spent by the customer
+        total_orders = len(orders)  # Total number of orders by the customer
+        order_details_list = []  # List to store details of each order
+
+        for order in orders:
+            total_spent_order = float(order["total_price"])  # Total amount spent in this order
+            categories = [item["product_name"] for item in order["line_items"]]  # List to store the categories of products in this order
+
+            order_details = {
+                'order_id': order["order_id"],
+                'date': order["order_date"],
+                'categories': categories,
+                'total_spent': total_spent_order
+            }
+
+            order_details_list.append(order_details)
+            total_spent_customer += total_spent_order
+
+        # If customer has no first name or last name, use "" instead
+        first_name = customer.first_name if customer.first_name else ""
+        last_name = customer.last_name if customer.last_name else ""
+
+        # If customer has no email, use "" instead
+        email = customer.email if customer.email else ""
+
+        customer_behavior.append(
+            {
+                "id": customer.id,
+                "name": first_name + " " + last_name,
+                "email": email,
+                "total_spent": total_spent_customer,
+                "total_orders": total_orders,
+                "order_details": order_details_list
+            }
+        )
+
+    return {"customer_behavior": customer_behavior}
+
+def analyze_customer_behavior_o() -> Dict[str, Any]:
+    """Analyze customer behavior data and return insights."""
+
+    customers = shopify.Customer.find()  # Fetch all customers
+    customer_behavior = []
+
     for customer in customers:
         # Get all orders by this customer
         orders = shopify.Order.find(customer_id=customer.id)
