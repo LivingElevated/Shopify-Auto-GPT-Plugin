@@ -164,9 +164,6 @@ def analyze_sales() -> Dict[str, Any]:
 
     # Calculate the percentage contribution of each product to total sales
     product_percentage_contribution = {product: str(round((sales / total_sales) * 100, 2)) + '%' for product, sales in product_sales.items()}
-    for product, sales in product_sales.items():
-        percentage = round((sales / total_sales) * 100, 2)  # round to 2 decimal places
-        product_percentage_contribution[product] = f"{percentage}%"
 
     # Find out the slow-moving products
     slow_moving_products = []
