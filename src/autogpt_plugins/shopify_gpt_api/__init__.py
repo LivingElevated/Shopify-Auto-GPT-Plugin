@@ -275,6 +275,7 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
             get_all_product_names,
             update_product,
             delete_product,
+            get_all_orders,
             analyze_sales,
             analyze_customer_behavior,
             stock_management,
@@ -343,6 +344,12 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
                 "product_id": "<product_id>"
             },
             delete_product,
+        )
+        prompt.add_command(
+            "Get All Orders",
+            "get_all_orders",
+            {},
+            get_all_orders,
         )
         prompt.add_command(
             "Analyze Sales",
