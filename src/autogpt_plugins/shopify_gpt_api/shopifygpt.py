@@ -234,58 +234,59 @@ def analyze_sales() -> Dict[str, Any]:
 def analyze_customer_behavior() -> Dict[str, Any]:
     """Analyze customer behavior data and return insights."""
 
-    # Fetch all customers and all orders
-    customers = shopify.Customer.find()
-    all_orders = shopify.Order.find(status="any")
-
+    customers = shopify.Customer.find()  # Fetch all customers
     customer_behavior = []
 
     for customer in customers:
-        # Get all orders for this customer
-        orders = [order for order in all_orders if order.customer and order.customer.id == customer.id]
+        # Get all orders by this customer
+        orders = shopify.Order.find(customer_id=customer.id)
 
-        if orders:  # if there are any orders for this customer
-            total_spent_customer = 0
-            total_orders = len(orders)
-            order_details_list = []
+        total_spent_customer = 0  # Total amount spent by the customer
+        total_orders = len(orders)  # Total number of orders by the customer
+        order_details_list = []  # List to store details of each order
 
-            for order in orders:
-                total_spent_order = 0
-                categories = []
+        for order in orders:
+            total_spent_order = 0  # Total amount spent in this order
+            categories = []  # List to store the categories of products in this order
 
-                for line_item in order.line_items:
-                    total_spent_order += line_item.price
-                    product = shopify.Product.find(line_item.product_id)
+            for line_item in order.line_items:
+                try:
+                    total_spent_order += float(line_item.price)
+                except ValueError:
+                    print(f"Error: could not convert '{line_item.price}' to float.")
+                    continue
 
-                    if product and product.product_type not in categories:
-                        categories.append(product.product_type)
+                product = shopify.Product.find(line_item.product_id)
 
-                order_details = {
-                    'order_id': order.id,
-                    'date': order.created_at,
-                    'categories': categories,
-                    'total_spent': total_spent_order
-                }
+                if product and product.product_type not in categories:
+                    categories.append(product.product_type)
 
-                order_details_list.append(order_details)
-                total_spent_customer += float(line_item.price)
+            order_details = {
+                'order_id': order.id,
+                'date': order.created_at,
+                'categories': categories,
+                'total_spent': total_spent_order
+            }
 
-            # If customer has no first name or last name, use "" instead
-            first_name = customer.first_name if customer.first_name else ""
-            last_name = customer.last_name if customer.last_name else ""
+            order_details_list.append(order_details)
+            total_spent_customer += total_spent_order
 
-            # If customer has no email, use "" instead
-            email = customer.email if customer.email else ""
+        # If customer has no first name or last name, use "" instead
+        first_name = customer.first_name if customer.first_name else ""
+        last_name = customer.last_name if customer.last_name else ""
 
-            customer_behavior.append(
-                {
-                    "name": first_name + " " + last_name,
-                    "email": email,
-                    "total_spent": total_spent_customer,
-                    "total_orders": total_orders,
-                    "order_details": order_details_list
-                }
-            )
+        # If customer has no email, use "" instead
+        email = customer.email if customer.email else ""
+
+        customer_behavior.append(
+            {
+                "name": first_name + " " + last_name,
+                "email": email,
+                "total_spent": total_spent_customer,
+                "total_orders": total_orders,
+                "order_details": order_details_list
+            }
+        )
 
     return {"customer_behavior": customer_behavior}
 
