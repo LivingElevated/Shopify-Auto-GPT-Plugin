@@ -234,41 +234,64 @@ def analyze_sales() -> Dict[str, Any]:
 def analyze_customer_behavior() -> Dict[str, Any]:
     """Analyze customer behavior data and return insights."""
 
+    # Fetch all customers and orders
+    customers = shopify.Customer.find()
+    orders = shopify.Order.find(status="any")
+
+    # Build a map from customer_id to customer details
+    customers_by_id = {customer.id: customer for customer in customers}
+
+    # Initialize a dictionary to hold customer behavior data
+    customer_behavior = {customer_id: {
+        "id": customer_id,
+        "name": f'{customer.first_name or ""} {customer.last_name or ""}'.strip(),
+        "email": customer.email or "",
+        "total_spent": 0,
+        "total_orders": 0,
+        "order_details": [],
+    } for customer_id, customer in customers_by_id.items()}
+
+    # Iterate through all orders
+    for order in orders:
+        customer_id = order.customer.id if order.customer else None
+        if customer_id is None:
+            continue
+
+        customer_data = customer_behavior.get(customer_id)
+        if customer_data is None:
+            continue
+
+        total_spent_order = 0
+        categories = []
+        for item in order.line_items:
+            product_name = None
+            if item.product_id:
+                product = shopify.Product.find(item.product_id)
+                product_name = product.title if product else None
+            total_spent_order += float(item.price)
+            categories.append(product_name)
+
+        order_details = {
+            'order_id': order.id,
+            'date': order.created_at,
+            'categories': categories,
+            'total_spent': total_spent_order
+        }
+
+        # Update customer data
+        customer_data['order_details'].append(order_details)
+        customer_data['total_spent'] += total_spent_order
+        customer_data['total_orders'] += 1
+
+    return {"customer_behavior": list(customer_behavior.values())}
+
+def analyze_customer_behavior_old() -> Dict[str, Any]:
+    """Analyze customer behavior data and return insights."""
+
     customers = shopify.Customer.find()  # Fetch all customers
     customer_behavior = []
 
-    orders = shopify.Order.find(status="any")  # Fetch all orders
-    all_orders = []
-
-    for order in orders:
-        try:
-            line_items = []
-            for item in order.line_items:
-                product_name = None
-                if item.product_id:
-                    product = shopify.Product.find(item.product_id)
-                    product_name = product.title if product else None
-
-                line_items.append({
-                    "product_id": item.product_id,
-                    "product_name": product_name,
-                    "quantity": item.quantity,
-                    "price": item.price
-                })
-
-            customer_id = order.customer.id if order.customer else None
-
-            order_details = {
-                "order_id": order.id,
-                "order_date": order.created_at,
-                "customer": customer_id,
-                "line_items": line_items,
-                "total_price": order.total_price,
-            }
-            all_orders.append(order_details)
-        except Exception as e:
-            print(f"Error processing order {order.id}: {e}")
-
+    all_orders = get_all_orders()  # Fetch all orders using the get_all_orders() function
     orders_by_customer = defaultdict(list)  # Create an empty dictionary to map customer IDs to orders
 
     for order in all_orders:
