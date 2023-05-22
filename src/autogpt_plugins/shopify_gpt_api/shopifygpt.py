@@ -248,7 +248,8 @@ def analyze_customer_behavior() -> Dict[str, Any]:
     for customer in customers:
         # Get all orders for this customer using the dictionary
         orders = orders_by_customer.get(customer.id, [])
-
+        print(f'Fetched {len(orders)} orders for customer {customer.id}')  # Debug line
+        
         total_spent_customer = 0  # Total amount spent by the customer
         total_orders = len(orders)  # Total number of orders by the customer
         order_details_list = []  # List to store details of each order
