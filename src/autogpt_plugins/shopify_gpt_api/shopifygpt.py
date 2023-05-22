@@ -235,8 +235,8 @@ def analyze_customer_behavior() -> Dict[str, Any]:
     """Analyze customer behavior data and return insights."""
 
     # Fetch all customers and all orders
-    customers = shopify.Customer.find()
-    all_orders = shopify.Order.find()
+    customers = shopify.Customer.find(status="any")
+    all_orders = shopify.Order.find(status="any")
 
     customer_behavior = []
 
