@@ -279,6 +279,7 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
             analyze_sales,
             analyze_customer_behavior,
             stock_management,
+            analyze_shopify_store,
             order_fulfillment,
             manage_discounts_and_offers,
             customer_service,
@@ -370,6 +371,13 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
             "stock_management",
             {},
             stock_management,
+        )
+
+        prompt.add_command(
+            "Analyze Shopify Store",
+            "analyze_shopify_store",
+            {},
+            analyze_shopify_store,
         )
 
         prompt.add_command(
