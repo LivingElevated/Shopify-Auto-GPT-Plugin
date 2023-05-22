@@ -235,7 +235,7 @@ def analyze_customer_behavior() -> Dict[str, Any]:
     """Analyze customer behavior data and return insights."""
 
     # Fetch all customers and all orders
-    customers = shopify.Customer.find(status="any")
+    customers = shopify.Customer.find()
     all_orders = shopify.Order.find(status="any")
 
     customer_behavior = []
@@ -268,7 +268,7 @@ def analyze_customer_behavior() -> Dict[str, Any]:
                 }
 
                 order_details_list.append(order_details)
-                total_spent_customer += total_spent_order
+                total_spent_customer += float(line_item.price)
 
             # If customer has no first name or last name, use "" instead
             first_name = customer.first_name if customer.first_name else ""
