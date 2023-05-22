@@ -158,6 +158,44 @@ def analyze_sales() -> Dict[str, Any]:
     total_sales = sum(float(order.total_price) for order in orders)  # Compute total sales
     total_sales = f"${total_sales:.2f}"
 
+    # Initialize product sales, product sold count, and product percentage contribution
+    product_data = defaultdict(lambda: {"sales": 0, "count": 0, "contribution": "0%"})
+
+    for order in orders:
+        for line_item in order.line_items:
+            product_data[line_item.title]["sales"] += float(line_item.price)
+            product_data[line_item.title]["count"] += line_item.quantity  # Assuming line_item has a 'quantity' attribute
+
+    total_products_sold = sum(data["count"] for data in product_data.values())
+
+    # Calculate the percentage contribution of each product to total sales
+    for product, data in product_data.items():
+        if data["count"] > 0:
+            data["contribution"] = f"{round((data['count'] / total_products_sold) * 100, 2)}%"
+
+    # Find out the slow-moving products (products that contribute 5% or less to total sales)
+    slow_moving_products = [product.title for product in all_products if product.title not in product_data or float(product_data[product.title]["contribution"].replace('%', '')) <= 5]
+
+    # Format sales as currency
+    for data in product_data.values():
+        data["sales"] = f"${data['sales']:.2f}"
+
+    return {
+        "total_sales": total_sales,
+        "product_data": dict(product_data),
+        "slow_moving_products": slow_moving_products,
+    }
+
+def analyze_sales_old() -> Dict[str, Any]:
+    """Analyze sales data and return insights."""
+
+    # Fetch all orders and all products
+    orders = shopify.Order.find(status="any")
+    all_products = shopify.Product.find()
+    
+    total_sales = sum(float(order.total_price) for order in orders)  # Compute total sales
+    total_sales = f"${total_sales:.2f}"
+
     # Calculate sales per product
     product_sales = defaultdict(int)
     product_sold_count = defaultdict(int)
