@@ -185,34 +185,35 @@ def analyze_sales() -> Dict[str, Any]:
         "product_data": dict(product_data),
         "slow_moving_products": slow_moving_products,
     }
+
 def analyze_customer_behavior() -> Dict[str, Any]:
     """Analyze customer behavior data and return insights."""
 
-    customers = shopify.Customer.find()  # Fetch all customers
+    # Fetch all customers and all orders
+    customers = shopify.Customer.find()
+    all_orders = shopify.Order.find()
+
     customer_behavior = []
-    print(f'Fetched {len(customers)} customers')  # Debug line
-
-    all_orders = shopify.Order.find()  # Fetch all orders
-
-    # Create a dictionary with customer.id as key and orders as values
-    order_dict = defaultdict(list)
-    for order in all_orders:
-        if order.customer:  # Check if order has a customer
-            order_dict[order.customer.id].append(order)
 
     for customer in customers:
-        orders = order_dict.get(customer.id)
+        # Get all orders for this customer
+        orders = [order for order in all_orders if order.customer and order.customer.id == customer.id]
 
-        if orders:
-            total_spent_customer = 0  # Total amount spent by the customer
-            total_orders = len(orders)  # Total number of orders by the customer
-            order_details_list = []  # List to store details of each order
+        if orders:  # if there are any orders for this customer
+            total_spent_customer = 0
+            total_orders = len(orders)
+            order_details_list = []
 
             for order in orders:
-                total_spent_order = sum(line_item.price for line_item in order.line_items)  # Total amount spent in this order
+                total_spent_order = 0
+                categories = []
 
-                # Find unique categories in order
-                categories = list(set(shopify.Product.find(line_item.product_id).product_type for line_item in order.line_items))
+                for line_item in order.line_items:
+                    total_spent_order += line_item.price
+                    product = shopify.Product.find(line_item.product_id)
+
+                    if product and product.product_type not in categories:
+                        categories.append(product.product_type)
 
                 order_details = {
                     'order_id': order.id,
