@@ -185,7 +185,6 @@ def analyze_sales() -> Dict[str, Any]:
         "product_data": dict(product_data),
         "slow_moving_products": slow_moving_products,
     }
-
 def analyze_customer_behavior() -> Dict[str, Any]:
     """Analyze customer behavior data and return insights."""
 
@@ -194,22 +193,14 @@ def analyze_customer_behavior() -> Dict[str, Any]:
     print(f'Fetched {len(customers)} customers')  # Debug line
 
     all_orders = shopify.Order.find()  # Fetch all orders
+
+    # Create a dictionary with customer.id as key and orders as values
     order_dict = defaultdict(list)
-
-
-    for customer in customers:
-        # Get all orders by this customer
-        orders = shopify.Order.find(customer_id=customer.id)
-        print(f'Fetched {len(orders)} orders for customer {customer.id}')  # Debug lin
-
     for order in all_orders:
-        order_dict[order.customer.id].append(order)
+        if order.customer:  # Check if order has a customer
+            order_dict[order.customer.id].append(order)
 
     for customer in customers:
-    # Get all orders by this customer
-        orders = shopify.Order.find(customer_id=customer.id)
-        print(f'Fetched {len(orders)} orders for customer {customer.id}')  # Debug lin
-
         orders = order_dict.get(customer.id)
 
         if orders:
@@ -218,15 +209,10 @@ def analyze_customer_behavior() -> Dict[str, Any]:
             order_details_list = []  # List to store details of each order
 
             for order in orders:
-                total_spent_order = 0  # Total amount spent in this order
-                categories = []  # List to store the categories of products in this order
+                total_spent_order = sum(line_item.price for line_item in order.line_items)  # Total amount spent in this order
 
-                for line_item in order.line_items:
-                    total_spent_order += line_item.price
-                    product = shopify.Product.find(line_item.product_id)
-
-                    if product and product.product_type not in categories:
-                        categories.append(product.product_type)
+                # Find unique categories in order
+                categories = list(set(shopify.Product.find(line_item.product_id).product_type for line_item in order.line_items))
 
                 order_details = {
                     'order_id': order.id,
@@ -256,7 +242,6 @@ def analyze_customer_behavior() -> Dict[str, Any]:
             )
 
     return {"customer_behavior": customer_behavior}
-
 
 def analyze_customer_behavior_old() -> Dict[str, Any]:
     """Analyze customer behavior data and return insights."""
