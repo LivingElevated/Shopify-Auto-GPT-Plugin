@@ -237,7 +237,38 @@ def analyze_customer_behavior() -> Dict[str, Any]:
     customers = shopify.Customer.find()  # Fetch all customers
     customer_behavior = []
 
-    all_orders = get_all_orders()  # Fetch all orders using the get_all_orders() function
+    orders = shopify.Order.find(status="any")  # Fetch all orders
+    all_orders = []
+
+    for order in orders:
+        try:
+            line_items = []
+            for item in order.line_items:
+                product_name = None
+                if item.product_id:
+                    product = shopify.Product.find(item.product_id)
+                    product_name = product.title if product else None
+
+                line_items.append({
+                    "product_id": item.product_id,
+                    "product_name": product_name,
+                    "quantity": item.quantity,
+                    "price": item.price
+                })
+
+            customer_id = order.customer.id if order.customer else None
+
+            order_details = {
+                "order_id": order.id,
+                "order_date": order.created_at,
+                "customer": customer_id,
+                "line_items": line_items,
+                "total_price": order.total_price,
+            }
+            all_orders.append(order_details)
+        except Exception as e:
+            print(f"Error processing order {order.id}: {e}")
+
     orders_by_customer = defaultdict(list)  # Create an empty dictionary to map customer IDs to orders
 
     for order in all_orders:
