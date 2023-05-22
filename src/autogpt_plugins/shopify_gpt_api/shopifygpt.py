@@ -128,7 +128,15 @@ def delete_product(product_id: str) -> None:
 def get_all_orders() -> List[Dict[str, Any]]:
     """Fetch all orders from Shopify and return insights."""
 
-    orders = shopify.Order.find()  # Fetch all orders
+    orders = shopify.Order.find(status="any")  # Fetch all orders
+
+    try:
+        orders = shopify.Order.find(status="any")  # Fetch all orders
+        print(f"Fetched {len(orders)} orders.")  # Print number of fetched orders
+    except Exception as e:
+        print(f"Error fetching orders: {e}")
+        return []
+    
     all_orders = []
 
     for order in orders:
