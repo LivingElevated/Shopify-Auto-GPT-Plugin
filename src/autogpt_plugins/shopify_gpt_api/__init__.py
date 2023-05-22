@@ -369,6 +369,12 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
         prompt.add_command(
             "Manage Stock",
             "manage_stock",
+            {},
+            stock_management,
+        )
+
+        prompt.add_command(
+            "Stock Management",
             "stock_management",
             {},
             stock_management,
