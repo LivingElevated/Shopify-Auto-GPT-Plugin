@@ -281,6 +281,7 @@ def analyze_customer_behavior() -> Dict[str, Any]:
 
         customer_behavior.append(
             {
+                "customer": customer.id,
                 "name": first_name + " " + last_name,
                 "email": email,
                 "total_spent": total_spent_customer,
