@@ -432,7 +432,7 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
             "create_collection",
             {
                 "title": "<title>",
-                "collection_type":  {"choices": ["custom", "smart"]}
+                "collection_type": "<collection_type>"
             },
             create_collection,
         )
