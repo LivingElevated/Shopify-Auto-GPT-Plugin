@@ -119,12 +119,11 @@ def search_products_by_title(title: str) -> List[Tuple[int, shopify.Product]]:
     Returns:
         List[Tuple[int, shopify.Product]]: List of products that match the title.
     """
-    lowercase_title = title.lower()
+    lowercase_title = title.casefold()
     matching_products = []
     all_products = shopify.Product.find()
     for product in all_products:
-        product_title = product.title.lower()
-        if lowercase_title in product_title:
+        if lowercase_title in product.title.casefold():
             matching_products.append((product.id, product))
     return matching_products
 
@@ -149,7 +148,10 @@ def update_product(product_id: str, title: Optional[str] = None, description: Op
             product.body_html = description
 
         product.save()
-        return product
+        
+        # Get the updated product details using get_product
+        updated_product = get_product(product_id)
+        return updated_product
 
     return None
 
