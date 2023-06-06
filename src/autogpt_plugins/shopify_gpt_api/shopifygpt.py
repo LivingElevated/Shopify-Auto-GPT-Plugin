@@ -39,7 +39,7 @@ def create_product(title: str, description: Optional[str] = None) -> shopify.Pro
 
     return product
 
-def get_product(product_identifier: Union[str, int]) -> Union[Dict[str, Any], None]:
+def get_product(product_identifier: Union[str, int]) -> Optional[shopify.Product]:
     """Fetch a product from Shopify using either its ID or its title.
 
     Args:
