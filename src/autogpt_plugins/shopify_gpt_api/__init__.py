@@ -274,6 +274,7 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
             get_products,
             get_all_products,
             get_all_product_names,
+            analyze_and_suggest_keywords,
             update_product,
             delete_product,
             get_all_orders,
@@ -337,6 +338,17 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
             "get_all_product_names",
             {},
             get_all_product_names,
+        )
+        prompt.add_command(
+            "Analyze and Suggest Keywords",
+            "analyze_and_suggest_keywords",
+            {
+                "product_title": "<product_title>",
+                "product_description": "<product_description>",
+                "tags": "<tags>",
+                "meta_data": "<meta_data>"
+            },
+            analyze_and_suggest_keywords,
         )
         prompt.add_command(
             "Update Product",
