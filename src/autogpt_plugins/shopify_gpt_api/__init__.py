@@ -312,7 +312,7 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
             "Get Product",
             "get_product",
             {
-                "product_id": "<product_id>"
+                "product_identifier": "<product_identifier>"
             },
             get_product,
         )
