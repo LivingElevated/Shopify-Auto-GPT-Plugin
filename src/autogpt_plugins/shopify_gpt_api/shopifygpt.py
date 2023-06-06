@@ -83,7 +83,7 @@ def get_all_product_names() -> List[str]:
     return product_names
 
 #Search products by title:
-def search_products_by_title(title: str) -> List[shopify.Product]:
+def search_products_by_title(title: str) -> List[Tuple[int, shopify.Product]]:
     """Search products by title in Shopify.
 
     Args:
