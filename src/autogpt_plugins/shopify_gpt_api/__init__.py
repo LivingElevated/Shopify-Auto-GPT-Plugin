@@ -271,6 +271,7 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
         from .shopifygpt import (
             create_product,
             get_product,
+            get_products,
             get_all_products,
             get_all_product_names,
             update_product,
@@ -315,6 +316,15 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
                 "product_identifier": "<product_identifier>"
             },
             get_product,
+        )
+        prompt.add_command(
+            "Get Products",
+            "get_products",
+            {
+                "sort_by": "<sort_by>",
+                "tags": "<tags>"
+            },
+            get_products,
         )
         prompt.add_command(
             "Get All Products",
