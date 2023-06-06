@@ -139,8 +139,7 @@ def update_product(product_id: str, title: Optional[str] = None, description: Op
     Returns:
         Optional[shopify.Product]: The updated product if successful, or None if the product is not found.
     """
-    product = get_product(product_id)
-    print("Type of product before update:", type(product))  # Add this line
+    product = shopify.Product.find(product_id)
 
     if product:
         if title:
@@ -150,7 +149,6 @@ def update_product(product_id: str, title: Optional[str] = None, description: Op
             product.body_html = description
 
         product.save()
-        print("Type of product after update:", type(product))  # Add this line
         return product
 
     return None
