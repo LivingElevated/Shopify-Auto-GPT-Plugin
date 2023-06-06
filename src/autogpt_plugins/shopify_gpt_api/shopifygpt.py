@@ -135,6 +135,8 @@ def search_products_by_title(title: str) -> List[Tuple[int, shopify.Product]]:
             matching_products.append((product.id, product))
     return matching_products
 
+
+
 def update_product(product_id: str, title: Optional[str] = None, description: Optional[str] = None) -> Optional[shopify.Product]:
     """Update a product on Shopify.
 
