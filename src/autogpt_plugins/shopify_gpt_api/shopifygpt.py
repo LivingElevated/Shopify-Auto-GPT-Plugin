@@ -92,7 +92,19 @@ def search_products_by_title(title: str) -> List[shopify.Product]:
     Returns:
         List[shopify.Product]: List of products that match the title.
     """
-    return shopify.Product.find(title=title)
+    lowercase_title = title.lower()
+    matching_products = []
+    all_products = shopify.Product.find()
+    for product in all_products:
+        if lowercase_title in product.title.lower():
+            matching_products.append((product.id, product))
+    return matching_products
+    matching_products = search_products_by_title("workout")
+    for product_id, product in matching_products:
+        print("Product ID:", product_id)
+        print("Product Title:", product.title)
+        # Access other product attributes as needed
+        print("---")
 
 def update_product(product_id: str, title: Optional[str] = None, description: Optional[str] = None) -> shopify.Product:
     """Update a product on Shopify.
