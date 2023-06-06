@@ -39,27 +39,33 @@ def create_product(title: str, description: Optional[str] = None) -> shopify.Pro
 
     return product
 
-def get_product(product_identifier: Union[str, int]) -> Union[shopify.Product, None]:
+def get_product(product_identifier: Union[str, int]) -> Union[Dict[str, Any], None]:
     """Fetch a product from Shopify using either its ID or its title.
 
     Args:
         product_identifier (Union[str, int]): The ID or the title of the product to fetch.
 
     Returns:
-        Union[shopify.Product, None]: The requested product if found, or None otherwise.
+        Union[Dict[str, Any], None]: A dictionary containing the product attributes if found, or None otherwise.
     """
     # If the identifier is numeric, it's treated as an ID.
     if str(product_identifier).isdigit():
         product_id = int(product_identifier)
-        return shopify.Product.find_one(product_id)
-
-    # If not, it's treated as a title.
+        product = shopify.Product.find(product_id)
     else:
         all_products = shopify.Product.find()
-        for product in all_products:
-            if product.title.lower() == product_identifier.lower():
-                return product
-    
+        product = next((p for p in all_products if p.title.lower() == product_identifier.lower()), None)
+
+    if product:
+        attributes = {
+            "id": product.id,
+            "title": product.title,
+            "description": product.body_html,
+            "tags": product.tags,
+            # Add more attributes here as needed
+        }
+        return attributes
+
     # Return None if no matching product was found.
     return None
 
