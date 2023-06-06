@@ -50,13 +50,14 @@ def get_product(product_identifier: Union[str, int]) -> Union[shopify.Product, N
     """
     # If the identifier is numeric, it's treated as an ID.
     if str(product_identifier).isdigit():
-        return shopify.Product.find(int(product_identifier))
+        product_id = int(product_identifier)
+        return shopify.Product.find_one(product_id)
 
     # If not, it's treated as a title.
     else:
         all_products = shopify.Product.find()
         for product in all_products:
-            if product.title == product_identifier:
+            if product.title.lower() == product_identifier.lower():
                 return product
     
     # Return None if no matching product was found.
