@@ -90,17 +90,16 @@ def search_products_by_title(title: str) -> List[Tuple[int, shopify.Product]]:
         title (str): Title of the products to search for.
 
     Returns:
-        List[shopify.Product]: List of products that match the title.
+        List[Tuple[int, shopify.Product]]: List of products that match the title.
     """
     lowercase_title = title.lower()
     matching_products = []
     all_products = shopify.Product.find()
     for product in all_products:
         product_title = product.title.lower()
-        if lowercase_title in product_title():
+        if lowercase_title in product_title:
             matching_products.append((product.id, product))
     return matching_products
-
 
 def update_product(product_id: str, title: Optional[str] = None, description: Optional[str] = None) -> shopify.Product:
     """Update a product on Shopify.
