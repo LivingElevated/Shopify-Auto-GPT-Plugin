@@ -1,4 +1,7 @@
 import shopify
+import requests
+from bs4 import BeautifulSoup
+import time
 import os
 from collections import defaultdict
 from datetime import datetime, timedelta
@@ -135,7 +138,63 @@ def search_products_by_title(title: str) -> List[Tuple[int, shopify.Product]]:
             matching_products.append((product.id, product))
     return matching_products
 
+def analyze_and_suggest_keywords(product_title: Optional[str] = None, product_description: Optional[str] = None, tags: Optional[str] = None, meta_data: Optional[str] = None):
+    # Define the URL for the Google Keyword Planner
+    url = 'https://ads.google.com/aw/keywordplanner/home'
 
+    # Define the headers for the HTTP request
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.97 Safari/537.36'
+    }
+
+    # Send an HTTP GET request to the Google Keyword Planner
+    response = requests.get(url, headers=headers)
+
+    # Parse the HTML response using BeautifulSoup
+    soup = BeautifulSoup(response.content, 'html.parser')
+
+    # Find the search box element
+    search_box = soup.find('input', {'aria-label': 'Search for new keywords'})
+
+    # Construct the search query
+    search_query = ""
+    if product_title:
+        search_query += product_title + " "
+    if product_description:
+        search_query += product_description + " "
+    if tags:
+        search_query += tags + " "
+    if meta_data:
+        search_query += meta_data
+
+    # Enter the search query into the search box
+    search_box['value'] = search_query
+
+    # Find the search button element
+    search_button = soup.find('button', {'aria-label': 'Get keyword ideas'})
+
+    # Click the search button
+    search_button.click()
+
+    # Wait for the page to load
+    time.sleep(5)
+
+    # Parse the HTML response again
+    soup = BeautifulSoup(response.content, 'html.parser')
+
+    # Find the keyword ideas table
+    keyword_table = soup.find('table', {'class': 'aw-di-table'})
+
+    # Extract the keyword ideas
+    keyword_ideas = []
+    for row in keyword_table.find_all('tr'):
+        cells = row.find_all('td')
+        if len(cells) > 1:
+            keyword_ideas.append(cells[1].text.strip())
+
+    # Print the keyword ideas
+    print("Keyword ideas:", keyword_ideas)
+    return keyword_ideas
 
 def update_product(product_id: str, title: Optional[str] = None, description: Optional[str] = None) -> Optional[shopify.Product]:
     """Update a product on Shopify.
