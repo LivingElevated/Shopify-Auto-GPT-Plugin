@@ -121,6 +121,14 @@ def search_products_by_title(title: str) -> List[Tuple[int, shopify.Product]]:
     """
     lowercase_title = title.casefold()
     matching_products = []
+
+    # Set the initial page and per_page values
+    page = 1
+    per_page = 250
+    
+    # Fetch the first page of products
+    products = shopify.Product.find(page=page, limit=per_page)
+
     all_products = shopify.Product.find()
     for product in all_products:
         if lowercase_title in product.title.casefold():
