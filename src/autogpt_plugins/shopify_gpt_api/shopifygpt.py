@@ -69,6 +69,26 @@ def get_product(product_identifier: Union[str, int]) -> Union[Dict[str, Any], No
     # Return None if no matching product was found.
     return None
 
+def get_products(sort_by: Optional[str] = None, tags: Optional[List[str]] = None) -> List[shopify.Product]:
+    """Get products from Shopify with optional sorting qualifiers.
+
+    Args:
+        sort_by (Optional[str], optional): The field to sort the products by. Defaults to None.
+        tags (Optional[List[str]], optional): The tags to filter the products by. Defaults to None.
+
+    Returns:
+        List[shopify.Product]: List of products matching the specified criteria.
+    """
+    products = shopify.Product.find()
+
+    if tags:
+        products = [product for product in products if all(tag in product.tags for tag in tags)]
+
+    if sort_by:
+        products = sorted(products, key=lambda product: getattr(product, sort_by))
+
+    return products
+
 def get_all_products() -> List[Tuple[int, str]]:
     """Fetch all products from Shopify and return their IDs and names.
 
@@ -107,7 +127,7 @@ def search_products_by_title(title: str) -> List[Tuple[int, shopify.Product]]:
         if lowercase_title in product_title:
             matching_products.append((product.id, product))
     return matching_products
-    
+
 def update_product(product_id: str, title: Optional[str] = None, description: Optional[str] = None) -> Optional[shopify.Product]:
     """Update a product on Shopify.
 
