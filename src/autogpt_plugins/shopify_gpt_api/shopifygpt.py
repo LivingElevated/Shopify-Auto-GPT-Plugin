@@ -51,7 +51,7 @@ def get_product(product_identifier: Union[str, int]) -> Union[Dict[str, Any], No
     # If the identifier is numeric, it's treated as an ID.
     if str(product_identifier).isdigit():
         product_id = int(product_identifier)
-        product = shopify.Product.find(product_id)
+        product = shopify.Product.find_one(product_id)
     else:
         all_products = shopify.Product.find()
         product = next((p for p in all_products if p.title.lower() == product_identifier.lower()), None)
@@ -140,6 +140,7 @@ def update_product(product_id: str, title: Optional[str] = None, description: Op
         Optional[shopify.Product]: The updated product if successful, or None if the product is not found.
     """
     product = get_product(product_id)
+    print("Type of product before update:", type(product))  # Add this line
 
     if product:
         if title:
@@ -149,6 +150,7 @@ def update_product(product_id: str, title: Optional[str] = None, description: Op
             product.body_html = description
 
         product.save()
+        print("Type of product after update:", type(product))  # Add this line
         return product
 
     return None
