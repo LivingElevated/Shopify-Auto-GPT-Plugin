@@ -107,8 +107,8 @@ def search_products_by_title(title: str) -> List[Tuple[int, shopify.Product]]:
         if lowercase_title in product_title:
             matching_products.append((product.id, product))
     return matching_products
-
-def update_product(product_id: str, title: Optional[str] = None, description: Optional[str] = None) -> shopify.Product:
+    
+def update_product(product_id: str, title: Optional[str] = None, description: Optional[str] = None) -> Optional[shopify.Product]:
     """Update a product on Shopify.
 
     Args:
@@ -117,18 +117,21 @@ def update_product(product_id: str, title: Optional[str] = None, description: Op
         description (Optional[str], optional): The new description of the product. Defaults to None.
 
     Returns:
-        shopify.Product: The updated product.
+        Optional[shopify.Product]: The updated product if successful, or None if the product is not found.
     """
     product = get_product(product_id)
 
-    if title:
-        product.title = title
+    if product:
+        if title:
+            product.title = title
 
-    if description:
-        product.body_html = description
+        if description:
+            product.body_html = description
 
-    product.save()
-    return product
+        product.save()
+        return product
+
+    return None
 
 def delete_product(product_id: str) -> None:
     """Delete a product from Shopify.
