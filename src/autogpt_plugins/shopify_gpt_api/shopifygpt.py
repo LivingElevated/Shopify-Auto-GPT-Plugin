@@ -99,12 +99,6 @@ def search_products_by_title(title: str) -> List[Tuple[int, shopify.Product]]:
         product_title = product.title.lower()
         if lowercase_title in product_title():
             matching_products.append((product.id, product))
-    matching_products = search_products_by_title("workout")
-    for product_id, product in matching_products:
-        print("Product ID:", product_id)
-        print("Product Title:", product.title)
-        # Access other product attributes as needed
-        print("---")
     return matching_products
 
 
