@@ -72,13 +72,13 @@ def get_all_products() -> List[Tuple[int, str]]:
     product_info = [(product.id, product.title) for product in products]
     return product_info
 
-def get_all_product_names():
+def get_all_product_names() -> List[str]:
     """Fetch all product names from Shopify.
 
     Returns:
         List[Any]: List of all products by name.
     """
-    products = get_all_products()
+    products = shopify.Product.find()
     product_names = [product.title for product in products]
     return product_names
 
@@ -388,8 +388,8 @@ def analyze_shopify_store() -> Dict[str, Any]:
     results["all_orders"] = all_orders
 
     # Analyze stock management
-    stock_analysis = stock_management()
-    results["stock_analysis"] = stock_analysis
+    # stock_analysis = stock_management()
+    # results["stock_analysis"] = stock_analysis
 
     return results
 
