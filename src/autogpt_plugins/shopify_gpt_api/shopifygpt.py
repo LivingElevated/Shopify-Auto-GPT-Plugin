@@ -179,7 +179,6 @@ def analyze_and_suggest_keywords(product_title: Optional[str] = None, product_de
         soup = BeautifulSoup(response.content, 'html.parser')
 
         # Print the entire HTML content for inspection
-        print("HTML content:", soup.prettify())
 
         # Find the search box element
         search_box = soup.find('input', {'aria-label': 'Search for new keywords'})
@@ -195,6 +194,7 @@ def analyze_and_suggest_keywords(product_title: Optional[str] = None, product_de
             search_query += tags + " "
         if meta_data:
             search_query += meta_data
+        print("Search query:", search_query)
 
         # Enter the search query into the search box
         search_box['value'] = search_query
