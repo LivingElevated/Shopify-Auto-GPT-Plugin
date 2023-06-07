@@ -5,13 +5,6 @@ import time
 import os
 from collections import defaultdict
 from datetime import datetime, timedelta
-from shopify.version import VERSION
-from shopify.session import Session, ValidationException
-from shopify.resources import *
-from shopify.limits import Limits
-from shopify.api_version import *
-from shopify.api_access import *
-from shopify.collection import PaginatedIterator
 from . import ShopifyAutoGPT
 from auto_gpt_plugin_template import AutoGPTPluginTemplate
 from typing import Union, Any, Dict, List, Optional, Tuple, TypeVar, TypedDict
@@ -336,7 +329,8 @@ def update_product(product_id: str, title: Optional[str] = None, description: Op
 
         if metafields:
             for metafield in metafields:
-                product.metafields.append(shopify.Metafield(**metafield))
+                product.metafields =[shopify.Metafield(**metafield) for metafield in metafields]
+
 
         product.save()
 
