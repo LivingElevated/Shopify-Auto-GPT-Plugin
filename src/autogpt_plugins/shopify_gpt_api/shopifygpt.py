@@ -176,7 +176,6 @@ def analyze_and_suggest_keywords(product_title: Optional[str] = None, product_de
         # Send an HTTP GET request to the Google Keyword Planner
         response = requests.get(url, headers=headers)
         print("Initial response status code:", response.status_code)
-        if response.status_code != 200: print("Error fetching page")
             
 
         # Parse the HTML response using BeautifulSoup
@@ -184,7 +183,7 @@ def analyze_and_suggest_keywords(product_title: Optional[str] = None, product_de
 
 
         # Find the search box element
-        search_box = soup.find('input', {'aria-label': 'Search for new keywords'})
+        search_box = soup.find('input', {'aria-label': 'Search input'})
         print("Search box:", search_box)
 
         # Construct the search query
