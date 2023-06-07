@@ -1,5 +1,5 @@
 import shopify
-import google.ads.googleads.client import GoogleAdsClient
+from google.ads.googleads.client import GoogleAdsClient
 import requests
 from bs4 import BeautifulSoup
 import time
