@@ -164,7 +164,7 @@ def search_products_by_title(title: str) -> List[Tuple[int, str]]:
 
 def analyze_and_suggest_keywords(product_title: Optional[str] = None, product_description: Optional[str] = None, tags: Optional[str] = None, meta_data: Optional[str] = None) -> List[str]:
     # Define the URL for the Google Keyword Planner
-    url = 'https://ads.google.com/aw/keywordplanner/home'
+    url = 'https://ads.google.com/aw/keywordplanner/home?ocid=1305268734&euid=904423857&__u=8766239593&uscid=1305268734&__c=8645025166&authuser=1'
 
     # Define the headers for the HTTP request
     headers = {
@@ -332,17 +332,23 @@ def update_product(product_id: str, title: Optional[str] = None, description: Op
 
         if metafields:
             for metafield in metafields:
-                product.metafields_global().update(metafield)
+                product.metafields.append(shopify.Metafield(**metafield))
 
         product.save()
 
-        print("Updated product details:")
-        print("Title:", product.title)
-        print("Description:", product.body_html)
-        print("Tags:", product.tags)
-        print("Metafields:", product.metafields_global())
 
         print(f"Product {product_id} updated successfully.")
+        print("Updated Product Details:")
+        print(f"ID: {product.id}")
+        print(f"Title: {product.title}")
+        print(f"Description: {product.body_html}")
+        print("Metafields:")
+        for metafield in product.metafields:
+            print(f"Namespace: {metafield.namespace}")
+            print(f"Key: {metafield.key}")
+            print(f"Value: {metafield.value}")
+            print(f"Value Type: {metafield.value_type}")
+            print("----")
 
         # Get the updated product details using get_product
         updated_product = get_product(product_id)
