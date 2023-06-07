@@ -2,6 +2,8 @@
 import os
 from typing import Any, Dict, List, Optional, Tuple, TypeVar, TypedDict
 import shopify
+from google.oauth2 import credentials
+from google.auth import exceptions
 from google.ads.googleads.client import GoogleAdsClient
 from auto_gpt_plugin_template import AutoGPTPluginTemplate
 
@@ -56,6 +58,7 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
         else:
             print("Shopify credentials not found in .env file.")
 
+        # Initialize Google Ads API credentials
         self.developer_token = os.getenv("DEVELOPER-TOKEN")
         self.client_id = os.getenv("CLIENT-ID")
         self.client_secret = os.getenv("CLIENT-SECRET")
@@ -70,19 +73,22 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
             and self.refresh_token
         ) is not None:
             print('Authenticating to Google Ads...')
-            googleads_client = GoogleAdsClient(
-                credentials=google.auth.credentials.Credentials.from_authorized_user_info({
-                    'developer_token': self.developer_token,
+            try:
+                credentials = credentials.from_authorized_user_info({
                     'client_id': self.client_id,
                     'client_secret': self.client_secret,
-                    'refresh_token': self.refresh_token,
-                }),
-                version="v13"
-            )
-            return googleads_client
-            print('Google Ads Authentication Complete')
+                    'refresh_token': self.refresh_token
+                })
+
+                self.googleads_client = GoogleAdsClient(credentials=credentials, developer_token=self.developer_token, version="v13")
+
+                print('Google Ads Authentication Complete')
+            except exceptions.RefreshError as ex:
+                print(f'An error occurred: {ex}')
+                self.googleads_client = None
         else:
             print("Google Ads credentials not found in .env file.")
+            self.googleads_client = None
 
     def can_handle_on_response(self) -> bool:
         """This method is called to check that the plugin can
