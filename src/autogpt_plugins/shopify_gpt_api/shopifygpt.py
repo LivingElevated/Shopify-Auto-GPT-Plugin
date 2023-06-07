@@ -140,17 +140,21 @@ def search_products_by_title(title: str) -> List[Tuple[int, shopify.Product]]:
     lowercase_title = title.casefold()
     matching_products = []
 
-    # Set the per_page values
-    per_page = 250
-    
-    # Fetch the first page of products
-    products = shopify.Product.find(limit=per_page)
+    # Set the values
+    limit = 100
+    get_next_page = True
+    since_id = 0
+    while get_next_page:
+        products = shopify.Product.find(since_id=since_id, limit=limit)
 
-    # Iterate through the paginated results until all products are fetched
-    while len(products) > 0:
         for product in products:
+            yield product
+            since_id = product.id
             if lowercase_title in product.title.casefold():
-                matching_products.append((product.id, product))
+                matching_products.append((product.id, product.title))
+
+        if len(products) < limit:
+            get_next_page = False
 
     return matching_products
 
