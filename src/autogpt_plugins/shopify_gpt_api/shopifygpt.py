@@ -98,12 +98,23 @@ def get_all_products() -> List[Tuple[int, str]]:
     Returns:
         List[Tuple[int, str]]: List of all products represented as tuples (id, name).
     """
-    products = shopify.Product.find()
+    limit=250
+    get_next_page = True
+    since_id = 0
+    while get_next_page:
+        products = shopify.Product.find(since_id=since_id, limit=limit)
+
+        for product in products:
+            yield product
+            since_id = product.id
+
+        if len(products) < limit:
+            get_next_page = False
 
     print(f"Found {len(products)} products.")
 
     product_info = [(product.id, product.title) for product in products]
-    
+
     return product_info
 
 def get_all_product_names() -> List[str]:
