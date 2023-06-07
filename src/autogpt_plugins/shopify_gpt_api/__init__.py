@@ -62,6 +62,7 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
         self.developer_token = os.getenv("DEVELOPER-TOKEN")
         self.client_id = os.getenv("CLIENT-ID")
         self.client_secret = os.getenv("CLIENT-SECRET")
+        self.access_token = os.getenv("ACCESS-TOKEN")
         self.refresh_token = os.getenv("REFRESH-TOKEN")
         self.login_customer_id = os.getenv("LOGIN-CUSTOMER-ID")
 
@@ -70,6 +71,7 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
             self.developer_token
             and self.client_id
             and self.client_secret
+            and self.access_token
             and self.refresh_token
         ) is not None:
             print('Authenticating to Google Ads...')
@@ -78,7 +80,7 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
                     'client_id': self.client_id,
                     'client_secret': self.client_secret,
                     'refresh_token': self.refresh_token,
-                    'token_uri': 'https://oauth2.googleapis.com/token'  # Use this as your token URI
+                    'token': self.access_token
                 })
 
                 self.googleads_client = GoogleAdsClient(credentials=credentials, developer_token=self.developer_token, version="v13")
