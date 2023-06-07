@@ -181,10 +181,15 @@ def analyze_and_suggest_keywords(product_title: Optional[str] = None, product_de
         # Parse the HTML response using BeautifulSoup
         soup = BeautifulSoup(response.content, 'html.parser')
 
+        search_box = soup.find('input', {'class': 'search-input'})
 
-        # Find the search box element
-        search_box = soup.find('input', {'aria-label': 'Search input'})
-        print("Search box:", search_box)
+        # Check if the search box element was found
+        if search_box is not None:
+            # Enter the search query into the search box
+            search_box['value'] = search_query
+            # Rest of the code...
+        else:
+            print("Search box not found")
 
         # Construct the search query
         search_query = ""
