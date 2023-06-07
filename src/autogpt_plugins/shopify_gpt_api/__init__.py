@@ -356,7 +356,9 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
             {
                 "product_id": "<product_id>",
                 "title": "<title>",
-                "description": "<description>"
+                "description": "<description>",
+                "tags": "<tags>",
+                "metafields": "<metafields>"
             },
             update_product,
         )
