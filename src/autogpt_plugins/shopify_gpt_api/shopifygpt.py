@@ -53,13 +53,24 @@ def get_product(product_identifier: Union[str, int]) -> Optional[shopify.Product
         product = next((p for p in all_products if p.title.lower() == product_identifier.lower()), None)
 
     if product:
+        metafields = shopify.Metafield.find(resource_id=product.id)
+        metafields_list = []
+        for metafield in metafields:
+            metafields_list.append({
+                "namespace": metafield.namespace,
+                "key": metafield.key,
+                "value": metafield.value,
+                "value_type": metafield.value_type
+            })
+
         attributes = {
             "id": str(product.id),  # Convert product.id to a string
             "title": product.title,
             "description": product.body_html,
             "tags": product.tags,
-            # Add more attributes here as needed
+            "metafields": metafields_list  # Add the metafields
         }
+
         return attributes
 
     # Return None if no matching product was found.
