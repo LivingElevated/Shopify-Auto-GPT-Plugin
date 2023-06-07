@@ -171,6 +171,9 @@ def analyze_and_suggest_keywords(product_title: Optional[str] = None, product_de
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.97 Safari/537.36'
     }
 
+    # Wait for the page to load
+    time.sleep(5)
+
     # Send an HTTP GET request to the Google Keyword Planner
     response = requests.get(url, headers=headers)
 
@@ -178,12 +181,13 @@ def analyze_and_suggest_keywords(product_title: Optional[str] = None, product_de
     soup = BeautifulSoup(response.content, 'html.parser')
 
     # Find the "Discover new keywords" button
-    discover_button = soup.find('button', {'aria-label': 'Discover new keywords'})
+    discover_button = soup.find('div', {'class': 'card-frame _ngcontent-jrk-4 collapsed-frame'})
 
     # Check if the button is found
     if discover_button is not None:
         # Click the "Discover new keywords" button
-        discover_button.click()
+        discover_button['aria-hidden'] = 'false'
+        discover_button['role'] = 'button'
 
         # Wait for the page to load
         time.sleep(5)
