@@ -77,7 +77,8 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
                 credentials = Credentials.from_authorized_user_info({
                     'client_id': self.client_id,
                     'client_secret': self.client_secret,
-                    'refresh_token': self.refresh_token
+                    'refresh_token': self.refresh_token,
+                    'token_uri': 'https://oauth2.googleapis.com/token'  # Use this as your token URI
                 })
 
                 self.googleads_client = GoogleAdsClient(credentials=credentials, developer_token=self.developer_token, version="v13")
