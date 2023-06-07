@@ -161,84 +161,85 @@ def search_products_by_title(title: str) -> List[Tuple[int, str]]:
 
     return matching_products
 
-def analyze_and_suggest_keywords(product_title: Optional[str] = None, product_description: Optional[str] = None, tags: Optional[str] = None, meta_data: Optional[str] = None):
-   
+def analyze_and_suggest_keywords(product_title: Optional[str] = None, product_description: Optional[str] = None, tags: Optional[str] = None, meta_data: Optional[str] = None) -> List[str]:
     # Define the URL for the Google Keyword Planner
-    url = 'https://ads.google.com/aw/keywordplanner/home?ocid=1305268734&euid=904423857&__u=8766239593&uscid=1305268734&__c=8645025166&authuser=0'
-
+    url = 'https://ads.google.com/aw/keywordplanner/home'
 
     # Define the headers for the HTTP request
     headers = {
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.97 Safari/537.36'
     }
 
-    try:
-        # Send an HTTP GET request to the Google Keyword Planner
-        response = requests.get(url, headers=headers)
-        print("Initial response status code:", response.status_code)
-            
+    # Send an HTTP GET request to the Google Keyword Planner
+    response = requests.get(url, headers=headers)
 
-        # Parse the HTML response using BeautifulSoup
-        soup = BeautifulSoup(response.content, 'html.parser')
+    # Parse the HTML response using BeautifulSoup
+    soup = BeautifulSoup(response.content, 'html.parser')
 
-        search_box = soup.find('input', {'class': 'search-input'})
+    # Find the "Discover new keywords" button
+    discover_button = soup.find('button', {'aria-label': 'Discover new keywords'})
 
-        # Check if the search box element was found
-        if search_box is not None:
-            # Enter the search query into the search box
-            search_box['value'] = search_query
-            # Rest of the code...
-        else:
-            print("Search box not found")
-
-        # Construct the search query
-        search_query = ""
-        if product_title:
-            search_query += product_title + " "
-        if product_description:
-            search_query += product_description + " "
-        if tags:
-            search_query += tags + " "
-        if meta_data:
-            search_query += meta_data
-        print("Search query:", search_query)
-
-        # Enter the search query into the search box
-        search_box['value'] = search_query
-
-        # Find the search button element
-        search_button = soup.find('button', {'aria-label': 'Get keyword ideas'})
-
-        # Click the search button
-        search_button.click()
-        print("Clicked search button")
+    # Check if the button is found
+    if discover_button is not None:
+        # Click the "Discover new keywords" button
+        discover_button.click()
 
         # Wait for the page to load
         time.sleep(5)
 
-        # Get the updated response after clicking the search button
-        response = requests.get(search_button['href'], headers=headers)
-        print("Updated response status code:", response.status_code)
-
         # Parse the HTML response again
         soup = BeautifulSoup(response.content, 'html.parser')
 
-        # Find the keyword ideas table
-        keyword_table = soup.find('table', {'class': 'aw-di-table'})
+        # Find the search box element
+        search_box = soup.find('input', {'aria-label': 'Search input'})
 
-        # Extract the keyword ideas
-        keyword_ideas = []
-        for row in keyword_table.find_all('tr'):
-            cells = row.find_all('td')
-            if len(cells) > 1:
-                keyword_ideas.append(cells[1].text.strip())
+        # Check if the search box element was found
+        if search_box is not None:
+            # Construct the search query
+            search_query = ""
+            if product_title:
+                search_query += product_title + " "
+            if product_description:
+                search_query += product_description + " "
+            if tags:
+                search_query += tags + " "
+            if meta_data:
+                search_query += meta_data
 
-        # Print the keyword ideas
-        print("Keyword ideas:", keyword_ideas)
-        return keyword_ideas
+            # Enter the search query into the search box
+            search_box['value'] = search_query
 
-    except Exception as e:
-        print("Error occurred:", str(e))
+            # Find the search button element
+            search_button = soup.find('button', {'aria-label': 'Get keyword ideas'})
+
+            # Click the search button
+            search_button.click()
+
+            # Wait for the page to load
+            time.sleep(5)
+
+            # Parse the HTML response again
+            soup = BeautifulSoup(response.content, 'html.parser')
+
+            # Find the keyword ideas table
+            keyword_table = soup.find('table', {'class': 'aw-di-table'})
+
+            # Extract the keyword ideas
+            keyword_ideas = []
+            for row in keyword_table.find_all('tr'):
+                cells = row.find_all('td')
+                if len(cells) > 1:
+                    keyword_ideas.append(cells[1].text.strip())
+
+            # Print the keyword ideas
+            print("Keyword ideas:", keyword_ideas)
+            return keyword_ideas
+
+        else:
+            print("Search box not found")
+            return []
+    else:
+        print("Discover button not found")
         return []
 
 def analyze_and_suggest_keywordsbug(product_title: Optional[str] = None, product_description: Optional[str] = None, tags: Optional[str] = None, meta_data: Optional[str] = None):
