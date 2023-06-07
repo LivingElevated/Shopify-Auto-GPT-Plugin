@@ -162,8 +162,10 @@ def search_products_by_title(title: str) -> List[Tuple[int, str]]:
     return matching_products
 
 def analyze_and_suggest_keywords(product_title: Optional[str] = None, product_description: Optional[str] = None, tags: Optional[str] = None, meta_data: Optional[str] = None):
+   
     # Define the URL for the Google Keyword Planner
-    url = 'https://ads.google.com/aw/keywordplanner/home'
+    url = 'https://ads.google.com/aw/keywordplanner/home?ocid=1305268734&euid=904423857&__u=8766239593&uscid=1305268734&__c=8645025166&authuser=0'
+
 
     # Define the headers for the HTTP request
     headers = {
@@ -174,11 +176,12 @@ def analyze_and_suggest_keywords(product_title: Optional[str] = None, product_de
         # Send an HTTP GET request to the Google Keyword Planner
         response = requests.get(url, headers=headers)
         print("Initial response status code:", response.status_code)
+        if response.status_code != 200: print("Error fetching page")
+            
 
         # Parse the HTML response using BeautifulSoup
         soup = BeautifulSoup(response.content, 'html.parser')
 
-        # Print the entire HTML content for inspection
 
         # Find the search box element
         search_box = soup.find('input', {'aria-label': 'Search for new keywords'})
