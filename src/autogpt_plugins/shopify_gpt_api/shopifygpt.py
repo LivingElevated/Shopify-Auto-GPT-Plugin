@@ -98,18 +98,19 @@ def get_all_products() -> List[Tuple[int, str]]:
     Returns:
         List[Tuple[int, str]]: List of all products represented as tuples (id, name).
     """
-    limit=250
+    limit = 100
     get_next_page = True
     since_id = 0
+    products = []
+
     while get_next_page:
-        products = shopify.Product.find(since_id=since_id, limit=limit)
+        products_page = shopify.Product.find(since_id=since_id, limit=limit)
+        products.extend(products_page)
 
-        for product in products:
-            yield product
-            since_id = product.id
-
-        if len(products) < limit:
+        if len(products_page) < limit:
             get_next_page = False
+        else:
+            since_id = products_page[-1].id
 
     print(f"Found {len(products)} products.")
 
@@ -303,13 +304,16 @@ def analyze_and_suggest_keywordsbug(product_title: Optional[str] = None, product
     print("Keyword ideas:", keyword_ideas)
     return keyword_ideas
 
-def update_product(product_id: str, title: Optional[str] = None, description: Optional[str] = None) -> Optional[shopify.Product]:
+def update_product(product_id: str, title: Optional[str] = None, description: Optional[str] = None, tags: Optional[str] = None, metafields: Optional[List[Dict[str, Union[str, int, float, bool]]]] = None, print_details: bool = False) -> Optional[shopify.Product]:
     """Update a product on Shopify.
 
     Args:
         product_id (str): The ID of the product to update.
         title (Optional[str], optional): The new title of the product. Defaults to None.
         description (Optional[str], optional): The new description of the product. Defaults to None.
+        tags (Optional[str], optional): The new tags for the product. Defaults to None.
+        metafields (Optional[List[Dict[str, Union[str, int, float, bool]]]], optional): The new metafields for the product. Defaults to None.
+        print_details (bool, optional): Whether to print the updated product details. Defaults to False.
 
     Returns:
         Optional[shopify.Product]: The updated product if successful, or None if the product is not found.
@@ -323,8 +327,24 @@ def update_product(product_id: str, title: Optional[str] = None, description: Op
         if description:
             product.body_html = description
 
+        if tags:
+            product.tags = tags
+
+        if metafields:
+            for metafield in metafields:
+                product.metafields_global().update(metafield)
+
         product.save()
-        
+
+        if print_details:
+            print("Updated product details:")
+            print("Title:", product.title)
+            print("Description:", product.body_html)
+            print("Tags:", product.tags)
+            print("Metafields:", product.metafields_global())
+
+        print(f"Product {product_id} updated successfully.")
+
         # Get the updated product details using get_product
         updated_product = get_product(product_id)
         return updated_product
