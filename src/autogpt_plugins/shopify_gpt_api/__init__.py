@@ -2,7 +2,7 @@
 import os
 from typing import Any, Dict, List, Optional, Tuple, TypeVar, TypedDict
 import shopify
-from google.oauth2 import credentials
+from google.oauth2.credentials import Credentials
 from google.auth import exceptions
 from google.ads.googleads.client import GoogleAdsClient
 from auto_gpt_plugin_template import AutoGPTPluginTemplate
@@ -74,7 +74,7 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
         ) is not None:
             print('Authenticating to Google Ads...')
             try:
-                credentials = credentials.from_authorized_user_info({
+                credentials = Credentials.from_authorized_user_info({
                     'client_id': self.client_id,
                     'client_secret': self.client_secret,
                     'refresh_token': self.refresh_token
