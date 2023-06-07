@@ -99,7 +99,11 @@ def get_all_products() -> List[Tuple[int, str]]:
         List[Tuple[int, str]]: List of all products represented as tuples (id, name).
     """
     products = shopify.Product.find()
+
+    print(f"Found {len(products)} products.")
+
     product_info = [(product.id, product.title) for product in products]
+    
     return product_info
 
 def get_all_product_names() -> List[str]:
@@ -143,7 +147,7 @@ def search_products_by_title(title: str) -> List[Tuple[int, shopify.Product]]:
         
         # Fetch the next page of products
         products = shopify.Product.find(page=page, limit=per_page)
-        
+
     return matching_products
 
 def analyze_and_suggest_keywords(product_title: Optional[str] = None, product_description: Optional[str] = None, tags: Optional[str] = None, meta_data: Optional[str] = None):
