@@ -141,26 +141,24 @@ def search_products_by_title(title: str) -> List[Tuple[int, shopify.Product]]:
     matching_products = []
 
         # Set the initial values for pagination
+    get_next_page = True
     limit = 100
-    page_info = None
+    since_id = 0
 
-    while True:
+    while get_next_page:
         # Retrieve the products using the Shopify API with pagination parameters
-        products = shopify.Product.find(limit=limit, page_info=page_info)
+        products = shopify.Product.find(limit=limit, since_id=since_id)
         
         for product in products:
             if lowercase_title in product.title.lower():
                 matching_products.append((product.id, product.title))
+                yield (product.id, product.title)
 
         # Check if there are more pages of results
-        if "link" in products.headers:
-            links = parse_link_header(products.headers["link"])
-            if "next" in links:
-                page_info = links["next"]["page_info"]
-            else:
-                break
+        if len(products) < limit:
+            get_next_page = False
         else:
-            break
+            since_id = products[-1].id
 
     return matching_products
 
