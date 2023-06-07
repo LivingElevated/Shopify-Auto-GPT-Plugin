@@ -52,41 +52,41 @@ def get_product(product_identifier: Union[str, int]) -> Optional[Dict[str, Union
         all_products = shopify.Product.find()
         product = next((p for p in all_products if p.title.lower() == product_identifier.lower()), None)
 
-        if product:
-            metafields = shopify.Metafield.find(resource_id=product.id)
-            metafields_list = []
-            for metafield in metafields:
-                metafield_info = {
-                    "namespace": metafield.namespace,
-                    "key": metafield.key,
-                    "value": metafield.value
-                }
-                if hasattr(metafield, 'value_type'):
-                    metafield_info["value_type"] = metafield.value_type
-                metafields_list.append(metafield_info)
-
-            attributes = {
-                "id": str(product.id),  # Convert product.id to a string
-                "title": product.title,
-                "description": product.body_html,
-                "tags": product.tags,
-                "metafields": metafields_list  # Add the metafields
+    if product:
+        metafields = shopify.Metafield.find(resource_id=product.id)
+        metafields_list = []
+        for metafield in metafields:
+            metafield_info = {
+                "namespace": metafield.namespace,
+                "key": metafield.key,
+                "value": metafield.value
             }
+            if hasattr(metafield, 'value_type'):
+                metafield_info["value_type"] = metafield.value_type
+            metafields_list.append(metafield_info)
 
-            print(f"Product Details:")
-            print(f"ID: {product.id}")
-            print(f"Title: {product.title}")
-            print(f"Description: {product.body_html}")
-            print("Metafields:")
-            for metafield in metafields_list:
-                print(f"Namespace: {metafield['namespace']}")
-                print(f"Key: {metafield['key']}")
-                print(f"Value: {metafield['value']}")
-                if 'value_type' in metafield:
-                    print(f"Value Type: {metafield['value_type']}")
-                print("----")
+        attributes = {
+            "id": str(product.id),  # Convert product.id to a string
+            "title": product.title,
+            "description": product.body_html,
+            "tags": product.tags,
+            "metafields": metafields_list  # Add the metafields
+        }
 
-            return attributes
+        print(f"Product Details:")
+        print(f"ID: {product.id}")
+        print(f"Title: {product.title}")
+        print(f"Description: {product.body_html}")
+        print("Metafields:")
+        for metafield in metafields_list:
+            print(f"Namespace: {metafield['namespace']}")
+            print(f"Key: {metafield['key']}")
+            print(f"Value: {metafield['value']}")
+            if 'value_type' in metafield:
+                print(f"Value Type: {metafield['value_type']}")
+            print("----")
+
+        return attributes
 
     return None
 
