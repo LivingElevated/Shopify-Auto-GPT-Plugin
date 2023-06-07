@@ -9,3 +9,5 @@ build
 twine
 setuptools
 shopifyapi
+googleads
+google-ads
