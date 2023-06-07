@@ -71,6 +71,18 @@ def get_product(product_identifier: Union[str, int]) -> Optional[shopify.Product
             "metafields": metafields_list  # Add the metafields
         }
 
+        print(f"Product Details:")
+        print(f"ID: {product.id}")
+        print(f"Title: {product.title}")
+        print(f"Description: {product.body_html}")
+        print("Metafields:")
+        for metafield in metafields_list:
+            print(f"Namespace: {metafield['namespace']}")
+            print(f"Key: {metafield['key']}")
+            print(f"Value: {metafield['value']}")
+            print(f"Value Type: {metafield['value_type']}")
+            print("----")
+
         return attributes
 
     # Return None if no matching product was found.
