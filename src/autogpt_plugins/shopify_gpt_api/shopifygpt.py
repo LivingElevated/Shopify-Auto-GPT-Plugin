@@ -202,6 +202,9 @@ def analyze_and_suggest_keywords(product_title: Optional[str] = None, product_de
     # Wait for the page to load
     time.sleep(5)
 
+    # Get the updated response after clicking the search button
+    response = requests.get(search_button['href'], headers=headers)
+
     # Parse the HTML response again
     soup = BeautifulSoup(response.content, 'html.parser')
 
