@@ -1,4 +1,5 @@
 import shopify
+import google.ads.googleads.client import GoogleAdsClient
 import requests
 from bs4 import BeautifulSoup
 import time
@@ -180,90 +181,60 @@ def search_products_by_title(title: str) -> List[Tuple[int, str]]:
 
     return matching_products
 
+# Define default location and language IDs
+_DEFAULT_LOCATION_IDS = ["1023191"]  # location ID for New York, NY
+_DEFAULT_LANGUAGE_ID = "1000"  # language ID for English
+
+# Import the Google Ads client
+googleads_client = None
+
 def analyze_and_suggest_keywords(product_title: Optional[str] = None, product_description: Optional[str] = None, tags: Optional[str] = None, meta_data: Optional[str] = None) -> List[str]:
-    # Define the URL for the Google Keyword Planner
-    url = 'https://ads.google.com/aw/keywordplanner/home?ocid=1305268734&euid=904423857&__u=8766239593&uscid=1305268734&__c=8645025166&authuser=1'
+    
+    global googleads_client
+    customer_id = os.getenv("LOGIN-CUSTOMER-ID")
 
-    # Define the headers for the HTTP request
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.97 Safari/537.36'
-    }
-
-    # Wait for the page to load
-    time.sleep(5)
-
-    # Send an HTTP GET request to the Google Keyword Planner
-    response = requests.get(url, headers=headers)
-
-    # Parse the HTML response using BeautifulSoup
-    soup = BeautifulSoup(response.content, 'html.parser')
-
-    # Find the "Discover new keywords" button
-    discover_button = soup.find('div', {'class': 'card-frame _ngcontent-jrk-4 collapsed-frame'})
-
-    # Check if the button is found
-    if discover_button is not None:
-        # Click the "Discover new keywords" button
-        discover_button['aria-hidden'] = 'false'
-        discover_button['role'] = 'button'
-
-        # Wait for the page to load
-        time.sleep(5)
-
-        # Parse the HTML response again
-        soup = BeautifulSoup(response.content, 'html.parser')
-
-        # Find the search box element
-        search_box = soup.find('input', {'aria-label': 'Search input'})
-
-        # Check if the search box element was found
-        if search_box is not None:
-            # Construct the search query
-            search_query = ""
-            if product_title:
-                search_query += product_title + " "
-            if product_description:
-                search_query += product_description + " "
-            if tags:
-                search_query += tags + " "
-            if meta_data:
-                search_query += meta_data
-
-            # Enter the search query into the search box
-            search_box['value'] = search_query
-
-            # Find the search button element
-            search_button = soup.find('button', {'aria-label': 'Get keyword ideas'})
-
-            # Click the search button
-            search_button.click()
-
-            # Wait for the page to load
-            time.sleep(5)
-
-            # Parse the HTML response again
-            soup = BeautifulSoup(response.content, 'html.parser')
-
-            # Find the keyword ideas table
-            keyword_table = soup.find('table', {'class': 'aw-di-table'})
-
-            # Extract the keyword ideas
-            keyword_ideas = []
-            for row in keyword_table.find_all('tr'):
-                cells = row.find_all('td')
-                if len(cells) > 1:
-                    keyword_ideas.append(cells[1].text.strip())
-
-            # Print the keyword ideas
-            print("Keyword ideas:", keyword_ideas)
-            return keyword_ideas
-
-        else:
-            print("Search box not found")
-            return []
-    else:
-        print("Discover button not found")
+    # If the Google Ads client is not initialized, return an empty list
+    if googleads_client is None:
         return []
+    # Construct the keyword text which includes product title, description, tags and meta data
+    keyword_texts = [product_title, product_description, tags, meta_data]
+    keyword_texts = list(filter(None, keyword_texts))
+
+    if not keyword_texts:
+        raise ValueError(
+            "At least one of product_title, product_description, tags, or meta_data is required, "
+            "but none were specified."
+        )
+
+    # Get the KeywordPlanIdeaService client
+    request = googleads_client.get_type("GenerateKeywordIdeasRequest")
+    request.customer_id = googleads_client.customer_id
+    request.language = googleads_client.get_service("GoogleAdsService").language_constant_path(
+        _DEFAULT_LANGUAGE_ID
+    )
+    request.geo_target_constants = [
+        googleads_client.get_service("GeoTargetConstantService").geo_target_constant_path(id)
+        for id in _DEFAULT_LOCATION_IDS
+    ]
+    request.include_adult_keywords = False
+    request.keyword_plan_network = googleads_client.enums.KeywordPlanNetworkEnum.GOOGLE_SEARCH_AND_PARTNERS
+    request.keyword_seed.keywords.extend(keyword_texts)
+
+    keyword_ideas = googleads_client.get_service("KeywordPlanIdeaService").generate_keyword_ideas(
+        request=request
+    )
+
+    keyword_suggestions = []
+    for idea in keyword_ideas:
+        keyword_suggestions.append(idea.text.value)
+        competition_value = idea.keyword_idea_metrics.competition.name
+        print(
+            f'Keyword idea text "{idea.text}" has '
+            f'"{idea.keyword_idea_metrics.avg_monthly_searches}" '
+            f'average monthly searches and "{competition_value}" '
+            "competition.\n"
+        )
+    return keyword_suggestions
 
 def analyze_and_suggest_keywordsbug(product_title: Optional[str] = None, product_description: Optional[str] = None, tags: Optional[str] = None, meta_data: Optional[str] = None):
     # Define the URL for the Google Keyword Planner

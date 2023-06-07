@@ -1,8 +1,8 @@
 """This is a Shopify integration plugin for Auto-GPT."""
 import os
 from typing import Any, Dict, List, Optional, Tuple, TypeVar, TypedDict
-
 import shopify
+import google.ads.googleads.client import GoogleAdsClient
 from auto_gpt_plugin_template import AutoGPTPluginTemplate
 
 
@@ -55,6 +55,34 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
             print('Shopify Authentication Complete')
         else:
             print("Shopify credentials not found in .env file.")
+
+        self.developer_token = os.getenv("DEVELOPER-TOKEN")
+        self.client_id = os.getenv("CLIENT-ID")
+        self.client_secret = os.getenv("CLIENT-SECRET")
+        self.refresh_token = os.getenv("REFRESH-TOKEN")
+        self.login_customer_id = os.getenv("LOGIN-CUSTOMER-ID")
+
+        # Initialize Google Ads API
+        if (
+            self.developer_token
+            and self.client_id
+            and self.client_secret
+            and self.refresh_token
+        ) is not None:
+            print('Authenticating to Google Ads...')
+            googleads_client = GoogleAdsClient(
+                credentials=google.auth.credentials.Credentials.from_authorized_user_info({
+                    'developer_token': self.developer_token,
+                    'client_id': self.client_id,
+                    'client_secret': self.client_secret,
+                    'refresh_token': self.refresh_token,
+                }),
+                version="v13"
+            )
+            return googleads_client
+            print('Google Ads Authentication Complete')
+        else:
+            print("Google Ads credentials not found in .env file.")
 
     def can_handle_on_response(self) -> bool:
         """This method is called to check that the plugin can
