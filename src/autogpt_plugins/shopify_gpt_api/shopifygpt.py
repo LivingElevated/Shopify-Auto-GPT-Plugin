@@ -35,7 +35,7 @@ def create_product(title: str, description: Optional[str] = None) -> shopify.Pro
 
     return product
 
-def get_product(product_identifier: Union[str, int]) -> Optional[shopify.Product]:
+def get_product(product_identifier: Union[str, int]) -> Optional[Dict[str, Union[str, List[Dict[str, str]]]]]:
     """Fetch a product from Shopify using either its ID or its title.
 
     Args:
@@ -52,40 +52,42 @@ def get_product(product_identifier: Union[str, int]) -> Optional[shopify.Product
         all_products = shopify.Product.find()
         product = next((p for p in all_products if p.title.lower() == product_identifier.lower()), None)
 
-    if product:
-        metafields = shopify.Metafield.find(resource_id=product.id)
-        metafields_list = []
-        for metafield in metafields:
-            metafields_list.append({
-                "namespace": metafield.namespace,
-                "key": metafield.key,
-                "value": metafield.value,
-                "value_type": metafield.value_type
-            })
+        if product:
+            metafields = shopify.Metafield.find(resource_id=product.id)
+            metafields_list = []
+            for metafield in metafields:
+                metafield_info = {
+                    "namespace": metafield.namespace,
+                    "key": metafield.key,
+                    "value": metafield.value
+                }
+                if hasattr(metafield, 'value_type'):
+                    metafield_info["value_type"] = metafield.value_type
+                metafields_list.append(metafield_info)
 
-        attributes = {
-            "id": str(product.id),  # Convert product.id to a string
-            "title": product.title,
-            "description": product.body_html,
-            "tags": product.tags,
-            "metafields": metafields_list  # Add the metafields
-        }
+            attributes = {
+                "id": str(product.id),  # Convert product.id to a string
+                "title": product.title,
+                "description": product.body_html,
+                "tags": product.tags,
+                "metafields": metafields_list  # Add the metafields
+            }
 
-        print(f"Product Details:")
-        print(f"ID: {product.id}")
-        print(f"Title: {product.title}")
-        print(f"Description: {product.body_html}")
-        print("Metafields:")
-        for metafield in metafields_list:
-            print(f"Namespace: {metafield['namespace']}")
-            print(f"Key: {metafield['key']}")
-            print(f"Value: {metafield['value']}")
-            print(f"Value Type: {metafield['value_type']}")
-            print("----")
+            print(f"Product Details:")
+            print(f"ID: {product.id}")
+            print(f"Title: {product.title}")
+            print(f"Description: {product.body_html}")
+            print("Metafields:")
+            for metafield in metafields_list:
+                print(f"Namespace: {metafield['namespace']}")
+                print(f"Key: {metafield['key']}")
+                print(f"Value: {metafield['value']}")
+                if 'value_type' in metafield:
+                    print(f"Value Type: {metafield['value_type']}")
+                print("----")
 
-        return attributes
+            return attributes
 
-    # Return None if no matching product was found.
     return None
 
 def get_products(sort_by: Optional[str] = None, tags: Optional[List[str]] = None) -> List[shopify.Product]:
