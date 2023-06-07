@@ -304,7 +304,7 @@ def analyze_and_suggest_keywordsbug(product_title: Optional[str] = None, product
     print("Keyword ideas:", keyword_ideas)
     return keyword_ideas
 
-def update_product(product_id: str, title: Optional[str] = None, description: Optional[str] = None, tags: Optional[str] = None, metafields: Optional[List[Dict[str, Union[str, int, float, bool]]]] = None, print_details: bool = False) -> Optional[shopify.Product]:
+def update_product(product_id: str, title: Optional[str] = None, description: Optional[str] = None, tags: Optional[str] = None, metafields: Optional[List[Dict[str, Union[str, int, float, bool]]]] = None) -> Optional[shopify.Product]:
     """Update a product on Shopify.
 
     Args:
@@ -336,12 +336,11 @@ def update_product(product_id: str, title: Optional[str] = None, description: Op
 
         product.save()
 
-        if print_details:
-            print("Updated product details:")
-            print("Title:", product.title)
-            print("Description:", product.body_html)
-            print("Tags:", product.tags)
-            print("Metafields:", product.metafields_global())
+        print("Updated product details:")
+        print("Title:", product.title)
+        print("Description:", product.body_html)
+        print("Tags:", product.tags)
+        print("Metafields:", product.metafields_global())
 
         print(f"Product {product_id} updated successfully.")
 
