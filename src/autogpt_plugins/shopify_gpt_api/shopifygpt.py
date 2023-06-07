@@ -128,7 +128,7 @@ def get_all_product_names() -> List[str]:
     return product_names
 
 #Search products by title:
-def search_products_by_title(title: str) -> List[Tuple[int, shopify.Product]]:
+def search_products_by_title(title: str) -> List[Tuple[int, str]]:
     """Search products by title in Shopify.
 
     Args:
@@ -140,7 +140,7 @@ def search_products_by_title(title: str) -> List[Tuple[int, shopify.Product]]:
     lowercase_title = title.casefold()
     matching_products = []
 
-        # Set the initial values for pagination
+    # Set the initial values for pagination
     get_next_page = True
     limit = 100
     since_id = 0
@@ -150,9 +150,8 @@ def search_products_by_title(title: str) -> List[Tuple[int, shopify.Product]]:
         products = shopify.Product.find(limit=limit, since_id=since_id)
         
         for product in products:
-            if lowercase_title in product.title.lower():
+            if lowercase_title in product.title.casefold():
                 matching_products.append((product.id, product.title))
-                yield (product.id, product.title)
 
         # Check if there are more pages of results
         if len(products) < limit:
