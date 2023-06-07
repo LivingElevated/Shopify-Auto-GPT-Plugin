@@ -328,9 +328,8 @@ def update_product(product_id: str, title: Optional[str] = None, description: Op
             product.tags = tags
 
         if metafields:
-            for metafield in metafields:
-                product.metafields =[shopify.Metafield(**metafield) for metafield in metafields]
-
+            for metafield_data in metafields:
+                product.add_metafield(shopify.Metafield(**metafield_data))
 
         product.save()
 
