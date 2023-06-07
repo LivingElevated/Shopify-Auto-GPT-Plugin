@@ -180,7 +180,8 @@ def analyze_and_suggest_keywords(product_title: Optional[str] = None, product_de
 
         # Find the search box element
         search_box = soup.find('input', {'aria-label': 'Search for new keywords'})
-
+        print("Search box:", search_box)
+        
         # Construct the search query
         search_query = ""
         if product_title:
