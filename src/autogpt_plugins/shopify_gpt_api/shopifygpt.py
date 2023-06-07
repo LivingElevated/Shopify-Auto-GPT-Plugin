@@ -132,10 +132,18 @@ def search_products_by_title(title: str) -> List[Tuple[int, shopify.Product]]:
     # Fetch the first page of products
     products = shopify.Product.find(page=page, limit=per_page)
 
-    all_products = shopify.Product.find()
-    for product in all_products:
-        if lowercase_title in product.title.casefold():
-            matching_products.append((product.id, product))
+    # Iterate through the paginated results until all products are fetched
+    while len(products) > 0:
+        for product in products:
+            if lowercase_title in product.title.casefold():
+                matching_products.append((product.id, product))
+        
+        # Increment the page number for the next iteration
+        page += 1
+        
+        # Fetch the next page of products
+        products = shopify.Product.find(page=page, limit=per_page)
+        
     return matching_products
 
 def analyze_and_suggest_keywords(product_title: Optional[str] = None, product_description: Optional[str] = None, tags: Optional[str] = None, meta_data: Optional[str] = None):
