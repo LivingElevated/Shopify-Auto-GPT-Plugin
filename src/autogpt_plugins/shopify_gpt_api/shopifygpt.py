@@ -170,6 +170,75 @@ def analyze_and_suggest_keywords(product_title: Optional[str] = None, product_de
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.97 Safari/537.36'
     }
 
+    try:
+        # Send an HTTP GET request to the Google Keyword Planner
+        response = requests.get(url, headers=headers)
+        print("Initial response status code:", response.status_code)
+
+        # Parse the HTML response using BeautifulSoup
+        soup = BeautifulSoup(response.content, 'html.parser')
+
+        # Find the search box element
+        search_box = soup.find('input', {'aria-label': 'Search for new keywords'})
+
+        # Construct the search query
+        search_query = ""
+        if product_title:
+            search_query += product_title + " "
+        if product_description:
+            search_query += product_description + " "
+        if tags:
+            search_query += tags + " "
+        if meta_data:
+            search_query += meta_data
+
+        # Enter the search query into the search box
+        search_box['value'] = search_query
+
+        # Find the search button element
+        search_button = soup.find('button', {'aria-label': 'Get keyword ideas'})
+
+        # Click the search button
+        search_button.click()
+        print("Clicked search button")
+
+        # Wait for the page to load
+        time.sleep(5)
+
+        # Get the updated response after clicking the search button
+        response = requests.get(search_button['href'], headers=headers)
+        print("Updated response status code:", response.status_code)
+
+        # Parse the HTML response again
+        soup = BeautifulSoup(response.content, 'html.parser')
+
+        # Find the keyword ideas table
+        keyword_table = soup.find('table', {'class': 'aw-di-table'})
+
+        # Extract the keyword ideas
+        keyword_ideas = []
+        for row in keyword_table.find_all('tr'):
+            cells = row.find_all('td')
+            if len(cells) > 1:
+                keyword_ideas.append(cells[1].text.strip())
+
+        # Print the keyword ideas
+        print("Keyword ideas:", keyword_ideas)
+        return keyword_ideas
+
+    except Exception as e:
+        print("Error occurred:", str(e))
+        return []
+
+def analyze_and_suggest_keywordsbug(product_title: Optional[str] = None, product_description: Optional[str] = None, tags: Optional[str] = None, meta_data: Optional[str] = None):
+    # Define the URL for the Google Keyword Planner
+    url = 'https://ads.google.com/aw/keywordplanner/home'
+
+    # Define the headers for the HTTP request
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.97 Safari/537.36'
+    }
+
     # Send an HTTP GET request to the Google Keyword Planner
     response = requests.get(url, headers=headers)
 
