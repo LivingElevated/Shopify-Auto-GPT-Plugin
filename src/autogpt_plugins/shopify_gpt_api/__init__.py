@@ -76,7 +76,8 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
             print('Authenticating to Google Ads...')
             try:
                 credentials = {
-                    "developer_token": self.access_token,
+                    "developer_token": self.developer_token,
+                    "access_token": self.access_token,
                     "refresh_token": self.refresh_token,
                     "client_id": self.client_id,
                     "client_secret": self.client_secret,
