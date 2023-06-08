@@ -64,6 +64,7 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
         self.access_token = os.getenv("ACCESS-TOKEN")
         self.refresh_token = os.getenv("REFRESH-TOKEN")
         self.login_customer_id = os.getenv("LOGIN-CUSTOMER-ID")
+        self.client_customer_id = os.getenv("CLIENT-CUSTOMER-ID")
 
         # Initialize Google Ads API
         if (
