@@ -76,15 +76,13 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
         ) is not None:
             print('Authenticating to Google Ads...')
             try:
-                credentials = Credentials(
-                    token=self.access_token,
-                    refresh_token=self.refresh_token,
-                    token_uri='https://www.googleapis.com/oauth2/v4/token',
-                    client_id=self.client_id,
-                    client_secret=self.client_secret,
-                )
+                credentials = {
+                    "developer_token": self.access_token,
+                    "refresh_token": self.refresh_token,
+                    "client_id": self.client_id,
+                    "client_secret": self.client_secret}
 
-                self.googleads_client = GoogleAdsClient(credentials=credentials, developer_token=self.developer_token, version="v13")
+                self.googleads_client = GoogleAdsClient.load_from_dict(credentials)
 
                 print('Google Ads Authentication Complete')
             except exceptions.RefreshError as ex:
