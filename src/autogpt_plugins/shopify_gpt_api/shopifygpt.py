@@ -204,9 +204,9 @@ def analyze_and_suggest_keywords(product_title: Optional[str] = None, product_de
         return []
     
     # Define the location IDs and language ID
-    _DEFAULT_LOCATION_IDS = ["1023191"]  # location ID for New York, NY
+    _DEFAULT_LOCATION_IDS = ["21167"]  # location ID for Austin, Texas
     _DEFAULT_LANGUAGE_ID = "1000"  # language ID for English
-    location_ids = ["1023191"]
+    location_ids = ["21167"]
     language_id = "1000"
 
     keyword_plan_idea_service = plugin.googleads_client.get_service("KeywordPlanIdeaService")
