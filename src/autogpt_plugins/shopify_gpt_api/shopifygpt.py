@@ -181,9 +181,18 @@ def search_products_by_title(title: str) -> List[Tuple[int, str]]:
 
     return matching_products
 
-# Define default location and language IDs
-_DEFAULT_LOCATION_IDS = ["1023191"]  # location ID for New York, NY
-_DEFAULT_LANGUAGE_ID = "1000"  # language ID for English
+def map_locations_ids_to_resource_names(client, location_ids):
+    """Converts a list of location IDs to resource names.
+    Args:
+        client: an initialized GoogleAdsClient instance.
+        location_ids: a list of location ID strings.
+    Returns:
+        a list of resource name strings using the given location IDs.
+    """
+    build_resource_name = client.get_service(
+        "GeoTargetConstantService"
+    ).geo_target_constant_path
+    return [build_resource_name(location_id) for location_id in location_ids]
 
 def analyze_and_suggest_keywords(product_title: Optional[str] = None, product_description: Optional[str] = None, tags: Optional[str] = None, meta_data: Optional[str] = None) -> List[str]:
     
@@ -193,6 +202,23 @@ def analyze_and_suggest_keywords(product_title: Optional[str] = None, product_de
     if plugin.googleads_client is None:
         print("Debug: googleads_client is ot initialized, returning an empty list")
         return []
+    
+    # Define the location IDs and language ID
+    location_ids = ["1023191"]  # location ID for New York, NY
+    language_id = "1000"  # language ID for English
+
+    keyword_plan_idea_service = plugin.googleads_client.get_service("KeywordPlanIdeaService")
+    keyword_competition_level_enum = (
+        plugin.googleads_client.enums.KeywordPlanCompetitionLevelEnum
+    )
+    keyword_plan_network = (
+        plugin.googleads_client.enums.KeywordPlanNetworkEnum.GOOGLE_SEARCH_AND_PARTNERS
+    )
+    location_rns = map_locations_ids_to_resource_names(plugin.googleads_client, location_ids)
+    language_rn = plugin.googleads_client.get_service("GoogleAdsService").language_constant_path(
+        language_id
+    )
+
     # Construct the keyword text which includes product title, description, tags and meta data
     keyword_texts = [product_title, product_description, tags, meta_data]
     keyword_texts = list(filter(None, keyword_texts))
@@ -206,7 +232,7 @@ def analyze_and_suggest_keywords(product_title: Optional[str] = None, product_de
 
     # Get the KeywordPlanIdeaService client
     request = plugin.googleads_client.get_type("GenerateKeywordIdeasRequest")
-    request.customer_id = plugin.googleads_client.customer_id
+    request.customer_id = customer_id  # Use the customer_id from the environment variable
     request.language = plugin.googleads_client.get_service("GoogleAdsService").language_constant_path(
         _DEFAULT_LANGUAGE_ID
     )
