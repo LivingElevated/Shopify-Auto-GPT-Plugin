@@ -2,7 +2,6 @@
 import os
 from typing import Any, Dict, List, Optional, Tuple, TypeVar, TypedDict
 import shopify
-from google.oauth2.credentials import Credentials
 from google.auth import exceptions
 from google.ads.googleads.client import GoogleAdsClient
 from auto_gpt_plugin_template import AutoGPTPluginTemplate
@@ -80,7 +79,8 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
                     "developer_token": self.access_token,
                     "refresh_token": self.refresh_token,
                     "client_id": self.client_id,
-                    "client_secret": self.client_secret}
+                    "client_secret": self.client_secret,
+                    "use_proto_plus": True}
 
                 self.googleads_client = GoogleAdsClient.load_from_dict(credentials)
 
