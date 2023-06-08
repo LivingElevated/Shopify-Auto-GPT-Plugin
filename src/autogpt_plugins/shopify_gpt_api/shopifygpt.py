@@ -185,12 +185,12 @@ def search_products_by_title(title: str) -> List[Tuple[int, str]]:
 _DEFAULT_LOCATION_IDS = ["1023191"]  # location ID for New York, NY
 _DEFAULT_LANGUAGE_ID = "1000"  # language ID for English
 
-def analyze_and_suggest_keywords(googleads_client, product_title: Optional[str] = None, product_description: Optional[str] = None, tags: Optional[str] = None, meta_data: Optional[str] = None) -> List[str]:
+def analyze_and_suggest_keywords(product_title: Optional[str] = None, product_description: Optional[str] = None, tags: Optional[str] = None, meta_data: Optional[str] = None) -> List[str]:
     
     customer_id = os.getenv("LOGIN-CUSTOMER-ID")
 
     # If the Google Ads client is not initialized, return an empty list
-    if googleads_client is None:
+    if plugin.googleads_client is None:
         print("Debug: googleads_client is ot initialized, returning an empty list")
         return []
     # Construct the keyword text which includes product title, description, tags and meta data
@@ -205,23 +205,23 @@ def analyze_and_suggest_keywords(googleads_client, product_title: Optional[str] 
     print("Debug: keyword_texts =", keyword_texts)
 
     # Get the KeywordPlanIdeaService client
-    request = googleads_client.get_type("GenerateKeywordIdeasRequest")
-    request.customer_id = googleads_client.customer_id
-    request.language = googleads_client.get_service("GoogleAdsService").language_constant_path(
+    request = plugin.googleads_client.get_type("GenerateKeywordIdeasRequest")
+    request.customer_id = plugin.googleads_client.customer_id
+    request.language = plugin.googleads_client.get_service("GoogleAdsService").language_constant_path(
         _DEFAULT_LANGUAGE_ID
     )
     request.geo_target_constants = [
-        googleads_client.get_service("GeoTargetConstantService").geo_target_constant_path(id)
+        plugin.googleads_client.get_service("GeoTargetConstantService").geo_target_constant_path(id)
         for id in _DEFAULT_LOCATION_IDS
     ]
     request.include_adult_keywords = False
-    request.keyword_plan_network = googleads_client.enums.KeywordPlanNetworkEnum.GOOGLE_SEARCH_AND_PARTNERS
+    request.keyword_plan_network = plugin.googleads_client.enums.KeywordPlanNetworkEnum.GOOGLE_SEARCH_AND_PARTNERS
     request.keyword_seed.keywords.extend(keyword_texts)
 
     print("Debug: request =", request)
 
     try:
-        keyword_ideas = googleads_client.get_service("KeywordPlanIdeaService").generate_keyword_ideas(
+        keyword_ideas = plugin.googleads_client.get_service("KeywordPlanIdeaService").generate_keyword_ideas(
             request=request
         )
     except Exception as e:
