@@ -185,16 +185,13 @@ def search_products_by_title(title: str) -> List[Tuple[int, str]]:
 _DEFAULT_LOCATION_IDS = ["1023191"]  # location ID for New York, NY
 _DEFAULT_LANGUAGE_ID = "1000"  # language ID for English
 
-# Import the Google Ads client
-googleads_client = None
-
-def analyze_and_suggest_keywords(product_title: Optional[str] = None, product_description: Optional[str] = None, tags: Optional[str] = None, meta_data: Optional[str] = None) -> List[str]:
+def analyze_and_suggest_keywords(googleads_client, product_title: Optional[str] = None, product_description: Optional[str] = None, tags: Optional[str] = None, meta_data: Optional[str] = None) -> List[str]:
     
-    global googleads_client
     customer_id = os.getenv("LOGIN-CUSTOMER-ID")
 
     # If the Google Ads client is not initialized, return an empty list
     if googleads_client is None:
+        print("Debug: googleads_client is ot initialized, returning an empty list")
         return []
     # Construct the keyword text which includes product title, description, tags and meta data
     keyword_texts = [product_title, product_description, tags, meta_data]
@@ -205,6 +202,7 @@ def analyze_and_suggest_keywords(product_title: Optional[str] = None, product_de
             "At least one of product_title, product_description, tags, or meta_data is required, "
             "but none were specified."
         )
+    print("Debug: keyword_texts =", keyword_texts)
 
     # Get the KeywordPlanIdeaService client
     request = googleads_client.get_type("GenerateKeywordIdeasRequest")
@@ -220,9 +218,15 @@ def analyze_and_suggest_keywords(product_title: Optional[str] = None, product_de
     request.keyword_plan_network = googleads_client.enums.KeywordPlanNetworkEnum.GOOGLE_SEARCH_AND_PARTNERS
     request.keyword_seed.keywords.extend(keyword_texts)
 
-    keyword_ideas = googleads_client.get_service("KeywordPlanIdeaService").generate_keyword_ideas(
-        request=request
-    )
+    print("Debug: request =", request)
+
+    try:
+        keyword_ideas = googleads_client.get_service("KeywordPlanIdeaService").generate_keyword_ideas(
+            request=request
+        )
+    except Exception as e:
+        print("Debug: Exception occurred while calling generate_keyword_ideas:", e)
+        raise e
 
     keyword_suggestions = []
     for idea in keyword_ideas:
