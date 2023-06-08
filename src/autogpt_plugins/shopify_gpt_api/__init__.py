@@ -384,7 +384,7 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
                 "tags": "<tags>",
                 "meta_data": "<meta_data>"
             },
-            analyze_and_suggest_keywords,
+            analyze_and_suggest_keywords(self.googleads_client), # Pass the client as an argument
         )
         prompt.add_command(
             "Update Product",
