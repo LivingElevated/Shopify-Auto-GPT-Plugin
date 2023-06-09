@@ -196,7 +196,7 @@ def map_locations_ids_to_resource_names(client, location_ids):
 
 def analyze_and_suggest_keywords(product_title: Optional[str] = None, product_description: Optional[str] = None, tags: Optional[str] = None, meta_data: Optional[str] = None) -> List[str]:
     
-    customer_id = os.getenv("LOGIN-CUSTOMER-ID")
+    customer_id = os.getenv("CLIENT-CUSTOMER-ID")
 
     # If the Google Ads client is not initialized, return an empty list
     if plugin.googleads_client is None:
