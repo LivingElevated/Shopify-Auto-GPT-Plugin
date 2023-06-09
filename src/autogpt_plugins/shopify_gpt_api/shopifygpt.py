@@ -451,7 +451,8 @@ def update_product(product_id: str, title: Optional[str] = None, description: Op
             print(f"Namespace: {metafield.namespace}")
             print(f"Key: {metafield.key}")
             print(f"Value: {metafield.value}")
-            print(f"Value Type: {metafield.value_type}")
+            if hasattr(metafield, 'value_type'):  # Check if 'value_type' attribute exists
+                print(f"Value Type: {metafield.value_type}")
             print("----")
 
         # Get the updated product details using get_product
