@@ -447,7 +447,7 @@ def update_product(product_id: str, title: Optional[str] = None, description: Op
         print(f"Description: {product.body_html}")
         print("Metafields:")
         metafields = shopify.Metafield.find(resource_id=product.id)
-        for metafield in product.metafields:
+        for metafield in metafields: 
             print(f"Namespace: {metafield.namespace}")
             print(f"Key: {metafield.key}")
             print(f"Value: {metafield.value}")
