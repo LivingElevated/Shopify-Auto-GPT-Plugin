@@ -37,6 +37,84 @@ def create_product(title: str, description: Optional[str] = None) -> shopify.Pro
     return product
 
 def get_product(product_identifier: Union[str, int]) -> Optional[Dict[str, Union[str, List[Dict[str, str]]]]]:
+    """Fetch basic product information from Shopify using either its ID or its title.
+
+    Args:
+        product_identifier (Union[str, int]): The ID or the title of the product to fetch.
+
+    Returns:
+        Union[Dict[str, Any], None]: A dictionary containing the product attributes if found, or None otherwise.
+    """
+    # If the identifier is numeric, it's treated as an ID.
+    if str(product_identifier).isdigit():
+        product_id = int(product_identifier)
+        product = shopify.Product.find(product_id)
+    else:
+        all_products = shopify.Product.find()
+        product = next((p for p in all_products if p.title.lower() == product_identifier.lower()), None)
+
+    if product:
+        attributes = {
+            "id": str(product.id),  # Convert product.id to a string
+            "title": product.title,
+            "description": product.body_html,
+            "tags": product.tags,
+        }
+
+        print(f"Product Basic Info:")
+        print(f"ID: {product.id}")
+        print(f"Title: {product.title}")
+        print(f"Description: {product.body_html}")
+
+        return attributes
+
+    return None
+
+
+def get_product_metafields(product_identifier: Union[str, int]) -> Optional[List[Dict[str, str]]]:
+    """Fetch product metafields from Shopify using either its ID or its title.
+
+    Args:
+        product_identifier (Union[str, int]): The ID or the title of the product to fetch.
+
+    Returns:
+        Union[List[Dict[str, str]], None]: A list of dictionaries containing the product metafields if found, or None otherwise.
+    """
+    # If the identifier is numeric, it's treated as an ID.
+    if str(product_identifier).isdigit():
+        product_id = int(product_identifier)
+        product = shopify.Product.find(product_id)
+    else:
+        all_products = shopify.Product.find()
+        product = next((p for p in all_products if p.title.lower() == product_identifier.lower()), None)
+
+    if product:
+        metafields = shopify.Metafield.find(resource_id=product.id)
+        metafields_list = []
+        for metafield in metafields:
+            metafield_info = {
+                "namespace": metafield.namespace,
+                "key": metafield.key,
+                "value": metafield.value
+            }
+            if hasattr(metafield, 'value_type'):
+                metafield_info["value_type"] = metafield.value_type
+            metafields_list.append(metafield_info)
+
+        print("Product Metafields:")
+        for metafield in metafields_list:
+            print(f"Namespace: {metafield['namespace']}")
+            print(f"Key: {metafield['key']}")
+            print(f"Value: {metafield['value']}")
+            if 'value_type' in metafield:
+                print(f"Value Type: {metafield['value_type']}")
+            print("----")
+
+        return metafields_list
+
+    return None
+
+def get_product_details_and_metafields(product_identifier: Union[str, int]) -> Optional[Dict[str, Union[str, List[Dict[str, str]]]]]:
     """Fetch a product from Shopify using either its ID or its title.
 
     Args:

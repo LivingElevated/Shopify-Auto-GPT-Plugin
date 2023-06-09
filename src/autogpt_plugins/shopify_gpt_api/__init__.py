@@ -308,6 +308,8 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
         from .shopifygpt import (
             create_product,
             get_product,
+            get_product_metafields,
+            get_product_details_and_metafields,
             get_products,
             get_all_products,
             get_all_product_names,
@@ -348,12 +350,28 @@ class ShopifyAutoGPT(AutoGPTPluginTemplate):
             create_product,
         )
         prompt.add_command(
-            "Get Product",
-            "get_product",
+            "Get Product Information",
+            "get_product_info",
             {
                 "product_identifier": "<product_identifier>"
             },
             get_product,
+        )
+        prompt.add_command(
+            "Get Product Metafields",
+            "get_product_metafields",
+            {
+                "product_identifier": "<product_identifier>"
+            },
+            get_product_metafields,
+        )
+        prompt.add_command(
+            "Get Product Details and Metafields",
+            "get_product_details_and_metafields",
+            {
+                "product_identifier": "<product_identifier>"
+            },
+            get_product_details_and_metafields,
         )
         prompt.add_command(
             "Get Products",
