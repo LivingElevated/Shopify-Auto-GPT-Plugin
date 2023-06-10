@@ -423,6 +423,10 @@ def update_product(product_id: str, title: Optional[str] = None, description: Op
     """
     product = shopify.Product.find(product_id)
 
+    if not product:
+        print(f"Product {product_id} not found.")
+        return None
+
     if product:
         if title:
             product.title = title
@@ -433,12 +437,23 @@ def update_product(product_id: str, title: Optional[str] = None, description: Op
         if tags:
             product.tags = tags
 
-        if metafields:
+        if metafields and isinstance(metafields, list):
             for metafield_data in metafields:
-                product.add_metafield(shopify.Metafield(**metafield_data))
+                if isinstance(metafield_data, dict):
+                    try:
+                        new_metafield = shopify.Metafield(**metafield_data)
+                        product.add_metafield(new_metafield)
+                        print(f"Added metafield: {metafield_data}")
+                    except Exception as e:
+                        print(f"Error adding metafield: {metafield_data}. Error: {str(e)}")
+                else:
+                    print(f"Ignoring invalid metafield data: {metafield_data}")
 
-        product.save()
-
+        try:
+            product.save()
+        except Exception as e:
+            print(f"Error saving product: {str(e)}")
+            return None
 
         print(f"Product {product_id} updated successfully.")
         print("Updated Product Details:")
